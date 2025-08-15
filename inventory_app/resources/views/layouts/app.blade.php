@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-white dark:bg-gray-800 m-0 p-0">
 
@@ -15,5 +16,6 @@
     </main>
 
     <script src="{{ asset('path/to/flowbite/dist/flowbite.min.js') }}"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
 </body>
 </html>
