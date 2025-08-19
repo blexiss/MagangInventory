@@ -10,7 +10,8 @@
 
     <!-- Table -->
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead id="table-head" class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-t-lg">
+        <thead id="table-head"
+            class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-t-lg">
             <!-- Header Tabel di Generate oleh JS -->
         </thead>
         <tbody id="table-body">
@@ -22,12 +23,101 @@
 
 <script>
     // Sample Data
-    const products = [
-        { id: "1", name: "HP LaserJet Pro", quantity: 20, category: "Printer", status: "Low" },
-        { id: "2", name: "TP-Link AX3000", quantity: 15, category: "Router", status: "Low" },
-        { id: "2", name: "Ruijie Reyee EG105W", quantity: 15, category: "AP", status: "Low" },
-        { id: "3", name: "Camtrix V380 Pro", quantity: 18, category: "CCTV", status: "High" },
-        { id: "4", name: "Nizar Pro Max 17\" 5090 Ti", quantity: 18, category: "PC", status: "High" }
+    const products = [{
+            id: "1",
+            name: "HP LaserJet Pro",
+            quantity: 20,
+            category: "Printer",
+            status: "Low"
+        },
+        {
+            id: "2",
+            name: "TP-Link AX3000",
+            quantity: 15,
+            category: "Router",
+            status: "Low"
+        },
+        {
+            id: "3",
+            name: "Ruijie Reyee EG105W",
+            quantity: 15,
+            category: "AP",
+            status: "Low"
+        },
+        {
+            id: "4",
+            name: "Camtrix V380 Pro",
+            quantity: 18,
+            category: "CCTV",
+            status: "High"
+        },
+        {
+            id: "5",
+            name: "Nizar Pro Max 17\" 5090 Ti",
+            quantity: 18,
+            category: "PC",
+            status: "High"
+        },
+        {
+            id: "6",
+            name: "Cisco Catalyst 2960",
+            quantity: 12,
+            category: "Switch",
+            status: "High"
+        },
+        {
+            id: "7",
+            name: "Logitech MX Keys",
+            quantity: 25,
+            category: "Keyboard",
+            status: "High"
+        },
+        {
+            id: "8",
+            name: "Dell OptiPlex 7090",
+            quantity: 10,
+            category: "PC",
+            status: "Low"
+        },
+        {
+            id: "9",
+            name: "HP DeskJet 2336",
+            quantity: 14,
+            category: "Printer",
+            status: "High"
+        },
+        {
+            id: "10",
+            name: "Epson L3110",
+            quantity: 8,
+            category: "Printer",
+            status: "Low"
+        },
+        {
+            id: "11",
+            name: "Hikvision DS-2CD2143G0-I",
+            quantity: 22,
+            category: "CCTV",
+            status: "High"
+        },
+        {
+            id: "12",
+            name: "Dahua IPC-HFW2431S-S-S2",
+            quantity: 16,
+            category: "CCTV",
+            status: "High"
+        },
+        {
+            id: "13",
+            name: "Avtech DGC1004X",
+            quantity: 9,
+            category: "CCTV",
+            status: "Low"
+        },
+
+
+
+
     ];
 
     // Map main categories to colors
@@ -52,7 +142,7 @@
         // Networking
         "Router": "Networking",
         "Switch": "Networking",
-        "AP":"Networking",
+        "AP": "Networking",
         "LAN": "Networking",
 
         //Workstation
@@ -69,28 +159,65 @@
         return `<span class="text-xs font-medium px-2 py-0.5 rounded ${classes}">${subCategory}</span>`;
     }
 
-    const statusPriority = { "Low": 1, "In Stock": 2, "High": 3 };
+    const statusPriority = {
+        "Low": 1,
+        "In Stock": 2,
+        "High": 3
+    };
 
     function statusBadge(status) {
         let text = "";
         let classes = "rounded-full border px-2.5 py-0.5 text-sm whitespace-nowrap ";
-        switch(status) {
-            case "Low": text = "Low"; classes += "border-red-500 text-red-700 dark:text-red-300"; break;
-            case "In Stock": text = "Medium"; classes += "border-yellow-500 text-yellow-700 dark:text-yellow-300"; break;
-            case "High": text = "In Stock"; classes += "border-green-500 text-green-700 dark:text-green-300"; break;
-            default: text = status; classes += "border-gray-500 text-gray-700 dark:text-gray-100";
+        switch (status) {
+            case "Low":
+                text = "Low";
+                classes += "border-red-500 text-red-700 dark:text-red-300";
+                break;
+            case "In Stock":
+                text = "Medium";
+                classes += "border-yellow-500 text-yellow-700 dark:text-yellow-300";
+                break;
+            case "High":
+                text = "In Stock";
+                classes += "border-green-500 text-green-700 dark:text-green-300";
+                break;
+            default:
+                text = status;
+                classes += "border-gray-500 text-gray-700 dark:text-gray-100";
         }
         return `<span class="${classes}">${text}</span>`;
     }
 
     // Column configuration
-    const columns = [
-        { key: "id", label: "ID" },
-        { key: "name", label: "Item Name", clickable: true },
-        { key: "quantity", label: "Quantity" },
-        { key: "category", label: "Category", formatter: categoryBadge },
-        { key: "status", label: "Status", formatter: statusBadge, sortable: true },
-        { key: "actions", label: "Action", isAction: true }
+    const columns = [{
+            key: "id",
+            label: "ID"
+        },
+        {
+            key: "name",
+            label: "Item Name",
+            clickable: true
+        },
+        {
+            key: "quantity",
+            label: "Quantity"
+        },
+        {
+            key: "category",
+            label: "Category",
+            formatter: categoryBadge
+        },
+        {
+            key: "status",
+            label: "Status",
+            formatter: statusBadge,
+            sortable: true
+        },
+        {
+            key: "actions",
+            label: "Action",
+            isAction: true
+        }
     ];
 
     // Render Table Header
@@ -103,7 +230,7 @@
             th.scope = "col";
             th.className = "px-6 py-3 text-left cursor-pointer select-none";
             th.textContent = col.label;
-            if(col.sortable && col.key === "status") th.id = "status-header";
+            if (col.sortable && col.key === "status") th.id = "status-header";
             tr.appendChild(th);
         });
         thead.appendChild(tr);
@@ -114,7 +241,7 @@
         const tableBody = document.getElementById("table-body");
         tableBody.innerHTML = "";
 
-        if(products.length === 0) {
+        if (products.length === 0) {
             tableBody.innerHTML = `<tr>
                 <td colspan="${columns.length}" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     No products available
@@ -125,20 +252,21 @@
 
         products.forEach(product => {
             const row = document.createElement("tr");
-            row.className = "bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600";
+            row.className =
+                "bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600";
 
             columns.forEach(col => {
                 const td = document.createElement("td");
                 td.className = "px-6 py-4";
 
-                if(col.formatter) td.innerHTML = col.formatter(product[col.key]);
-                else if(col.isAction) td.innerHTML = `
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                if (col.formatter) td.innerHTML = col.formatter(product[col.key]);
+                else if (col.isAction) td.innerHTML = `
+                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-2">Edit</a>
                     <a href="#" class="font-medium text-red-600 dark:text-red-600 hover:underline">Delete</a>
                 `;
                 else td.textContent = product[col.key];
 
-                if(col.clickable) {
+                if (col.clickable) {
                     td.innerHTML = `<span class="cursor-pointer">${product[col.key]}</span>`;
                     td.querySelector("span").addEventListener("click", () => showItemDetails(product));
                 }
@@ -151,43 +279,82 @@
     }
 
     // Modal Function
-function showItemDetails(product) {
-    const modal = document.getElementById("itemModal");
-    const modalContent = document.getElementById("modalContent");
+    function showItemDetails(product) {
+        const modal = document.getElementById("itemModal");
+        const modalContent = document.getElementById("modalContent");
 
-    // Determine unique property based on subcategory
-    let uniqueLabel = "Detail";
-    let uniqueValue = "-";
+        // Determine unique property based on subcategory
+        let uniqueLabel = "Detail";
+        let uniqueValue = "-";
 
-    const subcategoryDetails = {
-        // Monitoring
-        "CCTV": { label: "IP Address", default: "192.168.2.100" },
-        "Coaxial": { label: "Cable Length", default: "10m" },
+        const subcategoryDetails = {
+            // Monitoring
+            "CCTV": {
+                label: "IP Address",
+                default: "192.168.2.100"
+            },
+            "Coaxial": {
+                label: "Cable Length",
+                default: "10m"
+            },
 
-        // Networking
-        "Router": { label: "IP Address", default: "192.168.1.1" },
-        "AP": { label: "IP Address", default: "192.168.1.1" },
-        "Switch": { label: "IP Address", default: "192.168.1.2" },
-        "LAN": { label: "Length", default: "10m" },
+            // Networking
+            "Router": {
+                label: "IP Address",
+                default: "192.168.1.1"
+            },
+            "AP": {
+                label: "IP Address",
+                default: "192.168.1.1"
+            },
+            "Switch": {
+                label: "IP Address",
+                default: "192.168.1.2"
+            },
+            "LAN": {
+                label: "Length",
+                default: "10m"
+            },
 
-        // Workstation
-        "PC": { label: "Processor", default: "Intel I5 10700K" },
-        "Monitor": { label: "Monitor Size", default: "LED 24\"" },
-        "Keyboard": { label: "Form Factor", default: "" },
-        "Mouse": { label: "Mouse Type", default: "Wireless" },
+            // Workstation
+            "PC": {
+                label: "Processor",
+                default: "Intel I5 10700K"
+            },
+            "Monitor": {
+                label: "Monitor Size",
+                default: "LED 24\""
+            },
+            "Keyboard": {
+                label: "Form Factor",
+                default: ""
+            },
+            "Mouse": {
+                label: "Mouse Type",
+                default: "Wireless"
+            },
 
-        // Printing
-        "Printer": { label: "Serial Number", default: "A4F9K2B7Q1" },
-        "Paper": { label: "Paper Type", default: "A4" },
-        "Cartridge": { label: "Cartridge Type", default: "Ink" }
-    };
+            // Printing
+            "Printer": {
+                label: "Serial Number",
+                default: "A4F9K2B7Q1"
+            },
+            "Paper": {
+                label: "Paper Type",
+                default: "A4"
+            },
+            "Cartridge": {
+                label: "Cartridge Type",
+                default: "Ink"
+            }
+        };
 
-    if (subcategoryDetails[product.category]) {
-        uniqueLabel = subcategoryDetails[product.category].label;
-        uniqueValue = product.uniqueDetail || subcategoryDetails[product.category].default;
-    }
+        if (subcategoryDetails[product.category]) {
+            uniqueLabel = subcategoryDetails[product.category].label;
+            uniqueValue = product.uniqueDetail || subcategoryDetails[product.category].default;
+        }
 
-    modalContent.innerHTML = `
+        modalContent.innerHTML = `
         <div>
             <div class="px-4 sm:px-0">
                 <h3 class="text-base font-semibold text-white">Item Information</h3>
@@ -219,8 +386,8 @@ function showItemDetails(product) {
         </div>
     `;
 
-    modal.classList.remove("hidden");
-}
+        modal.classList.remove("hidden");
+    }
 
 
     // Close Modal
@@ -228,16 +395,17 @@ function showItemDetails(product) {
         document.getElementById("itemModal").classList.add("hidden");
     });
     document.getElementById("itemModal").addEventListener("click", (e) => {
-        if(e.target.id === "itemModal") e.target.classList.add("hidden");
+        if (e.target.id === "itemModal") e.target.classList.add("hidden");
     });
 
     // Status sorting
     let sortAsc = true;
     document.addEventListener("click", () => {
         const statusHeader = document.getElementById("status-header");
-        if(statusHeader) {
+        if (statusHeader) {
             statusHeader.addEventListener("click", () => {
-                products.sort((a,b) => sortAsc ? statusPriority[a.status]-statusPriority[b.status] : statusPriority[b.status]-statusPriority[a.status]);
+                products.sort((a, b) => sortAsc ? statusPriority[a.status] - statusPriority[b.status] :
+                    statusPriority[b.status] - statusPriority[a.status]);
                 sortAsc = !sortAsc;
                 renderTable();
             });
@@ -248,4 +416,3 @@ function showItemDetails(product) {
     renderHeader();
     renderTable();
 </script>
-

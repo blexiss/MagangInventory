@@ -9,6 +9,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
+
 <body class="bg-white dark:bg-gray-800 m-0 p-0">
 
     @include('partials.navbar')
@@ -19,6 +20,7 @@
 
     <script src="{{ asset('path/to/flowbite/dist/flowbite.min.js') }}"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
+    @stack('scripts')
 </body>
 
 </html>
