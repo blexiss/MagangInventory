@@ -39,7 +39,8 @@
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                <div
+                    class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                         Create New Product
                     </h3>
@@ -59,7 +60,7 @@
                         <div class="col-span-2">
                             <label for="name"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                            <input type="text" name="name" id="name"
+                            <input type="text" name="name" id="name" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Type product name" required="">
                         </div>
@@ -69,6 +70,7 @@
                             <input type="number" name="quantity" id="quantity"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="0" required="">
+
                         </div>
                         <div class="col-span-2 sm:col-span-1">
                             <label for="category"
@@ -76,12 +78,21 @@
                             <select id="category"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                 <option selected="">Select category</option>
-                                <option value="TV">TV/Monitors</option>
-                                <option value="PC">PC</option>
-                                <option value="GA">Gaming/Console</option>
-                                <option value="PH">Phones</option>
+                                <option value="TV">CCTV</option>
+                                <option value="PC">Router</option>
+                                <option value="GA">Printer</option>
+                                <option value="PH">PC</option>
                             </select>
                         </div>
+                        
+                        <div class="col-span-2">
+                            <label for="ip_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">IP
+                                Address</label>
+                            <input type="text" name="ip_address" id="ip_address"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="192.168.1.100">
+                        </div>
+
                         <div class="col-span-2">
                             <label for="description"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product
@@ -108,17 +119,17 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const addItemBtn = document.getElementById("addItemBtn");
-    const modal = document.getElementById("crud-modal");
-    const closeModalBtn = document.getElementById("closeModal");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const addItemBtn = document.getElementById("addItemBtn");
+            const modal = document.getElementById("crud-modal");
+            const closeModalBtn = document.getElementById("closeModal");
 
-    addItemBtn.addEventListener("click", () => modal.classList.remove("hidden"));
-    closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.classList.add("hidden");
-    });
-});
-</script>
+            addItemBtn.addEventListener("click", () => modal.classList.remove("hidden"));
+            closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) modal.classList.add("hidden");
+            });
+        });
+    </script>
 @endpush
