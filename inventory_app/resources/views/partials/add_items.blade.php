@@ -27,11 +27,6 @@
                 </select>
             </div>
 
-            <div>
-                <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
-                <input type="number" name="quantity" id="quantity" min="0" class="bg-gray-50 border rounded-lg w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white" placeholder="Quantity" required>
-            </div>
-
             <button type="submit" class="mt-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg w-full px-5 py-2.5">
                 Add Item
             </button>
