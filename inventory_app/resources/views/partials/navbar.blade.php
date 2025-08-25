@@ -21,10 +21,10 @@
                 </button>
             </div>
 
-            <!-- Logo + Desktop Navbar Buttons -->
+            <!-- Logo  -->
             <div class="flex flex-1 items-center sm:items-stretch sm:justify-start space-x-6 pl-12 sm:pl-0">
                 <div class="flex shrink-0 items-center">
-                    <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                    <img src="{{ asset('images/supply1.png') }}"
                         alt="Your Company" class="h-8 w-auto" />
                 </div>
                 @php

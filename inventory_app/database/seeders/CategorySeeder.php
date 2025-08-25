@@ -2,22 +2,22 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB; // <-- Add this line
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        DB::table('categories')->insert([
+        $categories = [
             ['name' => 'Printing'],
             ['name' => 'Monitoring'],
             ['name' => 'Networking'],
             ['name' => 'Workstation'],
-        ]);
+        ];
+
+        foreach ($categories as $category) {
+            Category::create($category);
+        }
     }
 }

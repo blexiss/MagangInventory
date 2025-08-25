@@ -3,33 +3,28 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Subcategory;
+use App\Models\Category;
 
 class SubcategorySeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        DB::table('subcategories')->insert([
-            // Printing
-            ['category_id' => 1, 'name' => 'Printer'],
-            ['category_id' => 1, 'name' => 'Paper'],
-            ['category_id' => 1, 'name' => 'Cartridge'],
+        $subcategories = [
+            'Printing' => ['Printer', 'Paper', 'Cartridge'],
+            'Monitoring' => ['CCTV', 'Coaxial'],
+            'Networking' => ['Router', 'Switch', 'AP', 'LAN'],
+            'Workstation' => ['Monitor', 'Keyboard', 'Mouse', 'PC'],
+        ];
 
-            // Monitoring
-            ['category_id' => 2, 'name' => 'CCTV'],
-            ['category_id' => 2, 'name' => 'Coaxial'],
-
-            // Networking
-            ['category_id' => 3, 'name' => 'Router'],
-            ['category_id' => 3, 'name' => 'Switch'],
-            ['category_id' => 3, 'name' => 'AP'],
-            ['category_id' => 3, 'name' => 'LAN'],
-
-            // Workstation
-            ['category_id' => 4, 'name' => 'Monitor'],
-            ['category_id' => 4, 'name' => 'Keyboard'],
-            ['category_id' => 4, 'name' => 'Mouse'],
-            ['category_id' => 4, 'name' => 'PC'],
-        ]);
+        foreach ($subcategories as $categoryName => $subs) {
+            $category = Category::where('name', $categoryName)->first();
+            foreach ($subs as $sub) {
+                Subcategory::create([
+                    'name' => $sub,
+                    'category_id' => $category->id
+                ]);
+            }
+        }
     }
 }
