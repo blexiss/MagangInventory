@@ -3,41 +3,37 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
         'subcategory_id',
-        'quantity',
-        'date_of_arrival',
-        'unique_attribute'
+        'json',
+        'date_of_arrival'
     ];
 
-    // Item belongs to a Subcategory
+    protected $casts = [
+        'json' => 'array', // otomatis decode ke array
+    ];
+
     public function subcategory()
     {
         return $this->belongsTo(Subcategory::class);
     }
 
-    // Item has many Assignments
-    public function assignments()
+    // qty otomatis dihitung dari JSON
+    public function getQtyAttribute()
     {
-        return $this->hasMany(Assignment::class);
+        return is_array($this->json) ? count($this->json) : 0;
     }
 
-    // Helper function: count assigned items
-    public function assignedCount()
+    // status otomatis dari qty
+    public function getStatusAttribute()
     {
-        return $this->assignments()->whereNull('returned_at')->count();
-    }
-
-    // Helper function: count in-stock items
-    public function inStockCount()
-    {
-        return $this->quantity - $this->assignedCount();
+        $qty = $this->qty;
+        if ($qty <= 5) return "Low";
+        if ($qty <= 10) return "In Stock";
+        return "High";
     }
 }

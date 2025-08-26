@@ -11,11 +11,11 @@ class ItemSeeder extends Seeder
     public function run()
     {
         $items = [
-            ['name' => 'EPSON L3110', 'subcategory' => 'Printer', 'quantity' => 20],
-            ['name' => 'HP LaserJet 1020', 'subcategory' => 'Printer', 'quantity' => 15],
-            ['name' => 'TP-Link AX3000', 'subcategory' => 'Router', 'quantity' => 15],
-            ['name' => 'Ruijie Reyee EG105W', 'subcategory' => 'AP', 'quantity' => 15],
-            ['name' => 'Camtrix V380 Pro', 'subcategory' => 'CCTV', 'quantity' => 18],
+            ['name' => 'EPSON L3110', 'subcategory' => 'Printer'],
+            ['name' => 'HP LaserJet 1020', 'subcategory' => 'Printer'],
+            ['name' => 'TP-Link AX3000', 'subcategory' => 'Router'],
+            ['name' => 'Ruijie Reyee EG105W', 'subcategory' => 'AP'],
+            ['name' => 'Camtrix V380 Pro', 'subcategory' => 'CCTV'],
         ];
 
         foreach ($items as $item) {
@@ -23,7 +23,6 @@ class ItemSeeder extends Seeder
             Item::create([
                 'name' => $item['name'],
                 'subcategory_id' => $subcategory->id,
-                'quantity' => $item['quantity'],
                 'date_of_arrival' => now()
             ]);
         }

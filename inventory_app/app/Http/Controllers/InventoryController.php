@@ -12,34 +12,71 @@ class InventoryController extends Controller
     {
         $perPage = 10;
 
-        // Get items with subcategory for table
-        $items = Item::with('subcategory')->paginate($perPage);
+        // ambil items beserta subcategory & category
+        $items = Item::with('subcategory.category')->paginate($perPage);
 
-        // Get categories with subcategories for modal dropdown
+        // kategori & subkategori untuk dropdown modal
         $categories = Category::with('subcategories')->get();
 
+        // mapping agar siap ditampilkan di blade
+        $mappedItems = $items->getCollection()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'quantity' => $item->qty,
+                'subcategory' => $item->subcategory->name,
+                'subcategory_id' => $item->subcategory_id,
+                'category' => $item->subcategory->category->name,
+                'status' => $item->status,
+            ];
+        });
+
         return view('inventory', [
-            'items' => $items,
+            'items' => $mappedItems,
             'categories' => $categories,
-            'currentPage' => 'inventory', // for navbar highlighting
+            'currentPage' => 'inventory',
             'perPage' => $perPage
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'subcategory_id' => 'required|exists:subcategories,id',
-            'quantity' => 'required|integer|min:0',
         ]);
 
         Item::create([
-            'name' => $request->name,
-            'subcategory_id' => $request->subcategory_id,
-            'quantity' => $request->quantity,
+            'name' => $validated['name'],
+            'subcategory_id' => $validated['subcategory_id'],
+            'json' => null, // default kosong
+            'date_of_arrival' => now(),
         ]);
 
-        return redirect()->route('inventory')->with('success', 'Item added successfully!');
+        return redirect()->back()->with('success', 'Item added successfully!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subcategory_id' => 'required|exists:subcategories,id',
+        ]);
+
+        $item = Item::findOrFail($id);
+        $item->update([
+            'name' => $validated['name'],
+            'subcategory_id' => $validated['subcategory_id'],
+        ]);
+
+        return redirect()->back()->with('success', 'Item updated successfully!');
+    }
+
+    public function destroy($id)
+    {
+        $item = Item::findOrFail($id);
+        $item->delete();
+
+        return redirect()->back()->with('success', 'Item deleted successfully!');
     }
 }
