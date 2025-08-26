@@ -44,7 +44,7 @@
                     <span
                         class="rounded-full border px-2.5 py-0.5 text-sm
                         @if($item['status'] === 'Low') border-red-500 text-red-700 dark:text-red-300
-                        @elseif($item['status'] === 'In Stock') border-yellow-500 text-yellow-700 dark:text-yellow-300
+                        @elseif($item['status'] === 'In Stock') border-green-500 text-green-700 dark:text-green-300
                         @elseif($item['status'] === 'High') border-green-500 text-green-700 dark:text-green-300
                         @endif">
                         {{ $item['status'] }}

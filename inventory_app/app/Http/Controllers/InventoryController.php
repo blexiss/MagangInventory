@@ -23,7 +23,7 @@ class InventoryController extends Controller
             return [
                 'id' => $item->id,
                 'name' => $item->name,
-                'quantity' => $item->qty,
+                'quantity' => $item->qty, // diambil dari database
                 'subcategory' => $item->subcategory->name,
                 'subcategory_id' => $item->subcategory_id,
                 'category' => $item->subcategory->category->name,
@@ -49,7 +49,7 @@ class InventoryController extends Controller
         Item::create([
             'name' => $validated['name'],
             'subcategory_id' => $validated['subcategory_id'],
-            'json' => null, // default kosong
+            'json' => [], // default kosong array agar qty = 0
             'date_of_arrival' => now(),
         ]);
 

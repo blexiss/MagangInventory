@@ -10,11 +10,12 @@ class Item extends Model
         'name',
         'subcategory_id',
         'json',
-        'date_of_arrival'
+        'date_of_arrival',
+        'quantity', // quantity di database
     ];
 
     protected $casts = [
-        'json' => 'array', // otomatis decode ke array
+        'json' => 'array', // decode otomatis json
     ];
 
     public function subcategory()
@@ -22,13 +23,17 @@ class Item extends Model
         return $this->belongsTo(Subcategory::class);
     }
 
-    // qty otomatis dihitung dari JSON
+    // Quantity dikurangi jumlah item di JSON
     public function getQtyAttribute()
     {
-        return is_array($this->json) ? count($this->json) : 0;
+        $baseQty = $this->attributes['quantity'] ?? 0;
+        $usedQty = is_array($this->json) ? count($this->json) : 0;
+
+        $remainingQty = $baseQty - $usedQty;
+        return $remainingQty >= 0 ? $remainingQty : 0; // jangan negatif
     }
 
-    // status otomatis dari qty
+    // Status otomatis dari quantity
     public function getStatusAttribute()
     {
         $qty = $this->qty;
