@@ -46,19 +46,20 @@
                     <div class="flex-1 ml-4">
                         <p class="text-sm text-gray-800 dark:text-gray-200">
                             @if ($log->action === 'add')
-                                <span class="font-semibold">{{ $log->user }}</span> 
-                                added in
+                                {{ $log->user }}
+                                <span class="font-bold">added</span>
                                 {{ $newData['name'] ?? '-' }} 
+                                in
                                 {{ $newData['subcategory'] ?? '-' }}
                             @elseif ($log->action === 'delete')
-                                <span class="font-semibold">{{ $log->user }}</span> 
-                                deleted
+                                {{ $log->user }}
+                                <span class="font-bold">deleted</span>
                                 {{ $oldData['name'] ?? '-' }} 
                                 in
                                 {{ $oldData['subcategory'] ?? '-' }}
                             @elseif ($log->action === 'edit')
-                                <span class="font-semibold">{{ $log->user }}</span> 
-                                edited
+                                {{ $log->user }}
+                                <span class="font-bold">edited</span>
                                 {{ $oldData['name'] ?? '-' }} 
                                 {{ $oldData['subcategory'] ?? '-' }}
                                 to
@@ -66,7 +67,7 @@
                                 {{ $newData['subcategory'] ?? '-' }}
                             @endif
                         </p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             {{ $log->created_at->format('d/m/Y') }} at {{ $log->created_at->format('H:i:s') }} - {{ $log->created_at->diffForHumans() }}
                         </p>
                     </div>
