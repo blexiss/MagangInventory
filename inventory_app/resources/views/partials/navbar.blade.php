@@ -99,7 +99,7 @@
                     <li>
                         <a href="{{ route($link['route']) }}"
                            @if ($currentPage === strtolower($link['name'])) aria-current="page" @endif
-                           class="{{ $currentPage === strtolower($link['name']) ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block px-3 py-2 rounded">
+                           class="{{ $currentPage === strtolower($link['route']) ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block px-3 py-2 rounded">
                             {{ $link['name'] }}
                         </a>
                     </li>
