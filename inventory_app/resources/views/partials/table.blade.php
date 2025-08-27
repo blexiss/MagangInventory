@@ -5,7 +5,7 @@
     <!-- Add Items Button -->
     <button type="button" id="addItemBtn"
         class="block rounded-lg border border-gray-300 bg-transparent px-5 py-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-        + Add Item
+        Add Item
     </button>
     @include('partials.search')
 </div>
@@ -64,7 +64,7 @@
                     <form action="{{ route('inventory.destroy', $item['id']) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="font-medium text-red-600 dark:text-red-500 hover:underline">
+                        <button type="submit" class="font-medium text-red-600 deleteBtn dark:text-red-500 hover:underline">
                             Delete
                         </button>
                     </form>
@@ -157,83 +157,82 @@
 
 @push('scripts')
 <script>
-
 document.addEventListener("DOMContentLoaded", function() {
-    let deleteForm; // store the form being deleted
+    // -------- DELETE MODAL --------
+    let deleteForm = null;
     const deleteModal = document.getElementById("popup-modal");
     const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
     const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
     const closeDeleteModal = document.getElementById("closeDeleteModal");
 
-    // Intercept all delete forms
-    document.querySelectorAll("form[action*='inventory'][method='POST']").forEach(form => {
-        const deleteButton = form.querySelector("button[type='submit']");
-        deleteButton.addEventListener("click", function(e) {
+    // Attach only to delete buttons
+    document.querySelectorAll(".deleteBtn").forEach(button => {
+        button.addEventListener("click", function(e) {
             e.preventDefault();
-            deleteForm = form; // save the current form
+            deleteForm = button.closest("form");
             deleteModal.classList.remove("hidden");
         });
     });
 
-    // Confirm delete
+    // Confirm deletion
     confirmDeleteBtn.addEventListener("click", () => {
         if(deleteForm) deleteForm.submit();
     });
 
-    // Cancel delete
+    // Cancel deletion
     cancelDeleteBtn.addEventListener("click", () => {
         deleteForm = null;
         deleteModal.classList.add("hidden");
     });
 
-    // Close modal
+    // Close modal via X button
     closeDeleteModal.addEventListener("click", () => {
         deleteForm = null;
         deleteModal.classList.add("hidden");
     });
 
-    // Close modal if clicked outside
+    // Close modal if clicking outside
     deleteModal.addEventListener("click", e => {
-        if(e.target === deleteModal){
+        if(e.target === deleteModal) {
             deleteForm = null;
             deleteModal.classList.add("hidden");
         }
     });
-});
 
-
-document.addEventListener("DOMContentLoaded", function() {
+    // -------- ADD / EDIT MODAL --------
     const addItemBtn = document.getElementById("addItemBtn");
-    const modal = document.getElementById("crud-modal");
-    const closeModalBtn = document.getElementById("closeModal");
+    const crudModal = document.getElementById("crud-modal");
+    const closeCrudModalBtn = document.getElementById("closeModal");
     const modalTitle = document.getElementById("modalTitle");
     const submitBtn = document.getElementById("submitBtn");
     const form = document.getElementById("crudForm");
     const nameInput = document.getElementById("name");
     const subcategorySelect = document.getElementById("subcategory_id");
 
-    // Tombol Add
+    // Open Add Item modal
     addItemBtn.addEventListener("click", () => {
-        modal.classList.remove("hidden");
+        crudModal.classList.remove("hidden");
         modalTitle.textContent = "Add New Item";
         submitBtn.textContent = "Add Item";
         form.action = "{{ route('inventory.store') }}";
-        form.querySelector("input[name='_method']")?.remove(); // hapus PUT kalau ada
+
+        // Remove any existing PUT method
+        form.querySelector("input[name='_method']")?.remove();
         form.reset();
     });
 
-    // Tombol Close
-    closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
-    modal.addEventListener("click", e => { if(e.target===modal) modal.classList.add("hidden"); });
+    // Close Add/Edit modal
+    closeCrudModalBtn.addEventListener("click", () => crudModal.classList.add("hidden"));
+    crudModal.addEventListener("click", e => { if(e.target === crudModal) crudModal.classList.add("hidden"); });
 
-    // Tombol Edit
+    // Open Edit modal
     document.querySelectorAll(".editBtn").forEach(btn => {
         btn.addEventListener("click", () => {
             const id = btn.dataset.id;
             const name = btn.dataset.name;
             const subcategoryId = btn.dataset.subcategoryId;
 
-            modal.classList.remove("hidden");
+            crudModal.classList.remove("hidden");
             modalTitle.textContent = "Edit Item";
             submitBtn.textContent = "Update Item";
 
@@ -242,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             form.action = `/inventory/${id}/update`;
 
-            // tambahkan input PUT kalau belum ada
+            // Add PUT method if not present
             if (!form.querySelector("input[name='_method']")) {
                 const hiddenInput = document.createElement("input");
                 hiddenInput.type = "hidden";
