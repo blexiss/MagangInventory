@@ -7,11 +7,33 @@
         class="block rounded-lg border border-gray-300 bg-transparent px-5 py-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
         Add Item
     </button>
-    @include('partials.search')
+
+    <!-- Searchbar -->
+    <div class="justify-end flex-1 hidden sm:flex">
+        <div class="relative max-w-xs min-w-[100px] sm:min-w-[150px]">
+            <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                </svg>
+            </div>
+            <input type="text" id="search_bar"
+                class="block w-full px-10 pt-2 pb-2 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-0 peer"
+                placeholder=" " />
+            <label for="search_bar"
+                class="absolute top-2 z-10 origin-[0] px-2 text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75
+          peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
+          peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 dark:text-gray-400 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 start-1 bg-white dark:bg-gray-800">
+                Search ID or Items
+            </label>
+        </div>
+    </div>
 </div>
 
+
 <!-- Table -->
-<div class="relative mt-4 overflow-x-auto shadow-md sm:rounded-lg">
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase rounded-t-lg bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -43,9 +65,9 @@
                 <td class="px-6 py-4">
                     <span
                         class="rounded-full border px-2.5 py-0.5 text-sm
-                        @if($item['status'] === 'Out of Stock') border-red-500 text-red-700 dark:text-red-300
-                        @elseif($item['status'] === 'Low') border-yellow-500 text-yellow-700 dark:text-yellow-300
-                        @elseif($item['status'] === 'In Stock') border-green-500 text-green-700 dark:text-green-300
+                        @if($item['status'] === 'Out of Stock') border-red-500 text-red-700 dark:text-red-300 whitespace-nowrap
+                        @elseif($item['status'] === 'Low') border-yellow-500 text-yellow-700 dark:text-yellow-300 whitespace-nowrap
+                        @elseif($item['status'] === 'In Stock') border-green-500 text-green-700 dark:text-green-300 whitespace-nowrap
                         @endif">
                         {{ $item['status'] }}
                     </span>

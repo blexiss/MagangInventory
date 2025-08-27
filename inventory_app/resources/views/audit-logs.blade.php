@@ -1,17 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="p-6">
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Inventory Logs</h1>
-
-    <div class="bg-white dark:bg-gray-900 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+<div class="p-10">
+    <div class="flex items-center mb-10">
+        <div class="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
+        <h1 class="px-4 text-2xl text-center text-gray-800 dark:text-white">Audit Logs</h1>
+        <div class="flex-1 h-px bg-gray-300 dark:bg-gray-700"></div>
+    </div>
+    
+    <div class="bg-white divide-y divide-gray-200 rounded-lg shadow dark:bg-gray-900 dark:divide-gray-700">
         @foreach ($logs as $log)
             @php
                 $oldData = json_decode($log->old_data, true) ?? [];
                 $newData = json_decode($log->new_data, true) ?? [];
             @endphp
 
-            <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            <div class="p-4 transition hover:bg-gray-50 dark:hover:bg-gray-800">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
                         @switch($log->action)
@@ -39,23 +43,23 @@
                         @endswitch
                     </div>
 
-                    <div class="ml-4 flex-1">
+                    <div class="flex-1 ml-4">
                         <p class="text-sm text-gray-800 dark:text-gray-200">
                             @if ($log->action === 'add')
                                 <span class="font-semibold">{{ $log->user }}</span> 
-                                add {{ $log->model }}
+                                added {{ $log->model }}
                                 {{ $newData['name'] ?? '-' }} 
                                 {{ $newData['category'] ?? '-' }} 
                                 {{ $newData['subcategory'] ?? '-' }}
                             @elseif ($log->action === 'delete')
                                 <span class="font-semibold">{{ $log->user }}</span> 
-                                delete {{ $log->model }}
+                                deleted {{ $log->model }}
                                 {{ $oldData['name'] ?? '-' }} 
                                 {{ $oldData['category'] ?? '-' }} 
                                 {{ $oldData['subcategory'] ?? '-' }}
                             @elseif ($log->action === 'edit')
                                 <span class="font-semibold">{{ $log->user }}</span> 
-                                edit {{ $log->model }}
+                                edited {{ $log->model }}
                                 {{ $oldData['name'] ?? '-' }} 
                                 {{ $oldData['category'] ?? '-' }} 
                                 {{ $oldData['subcategory'] ?? '-' }}
@@ -65,7 +69,7 @@
                                 {{ $newData['subcategory'] ?? '-' }}
                             @endif
                         </p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             {{ $log->created_at->format('d/m/Y H:i:s') }} - {{ $log->created_at->diffForHumans() }}
                         </p>
                     </div>
