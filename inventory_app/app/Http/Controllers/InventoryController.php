@@ -5,25 +5,41 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
+use App\Models\AuditLog;
 
 class InventoryController extends Controller
 {
+    private $dummyUsers = ['Dimas'];
+
+    // Fungsi untuk membuat audit log
+    private function createAuditLog($action, $model, $oldData = null, $newData = null)
+    {
+        $user = $this->dummyUsers[array_rand($this->dummyUsers)];
+
+        AuditLog::create([
+            'user' => $user,
+            'action' => $action,
+            'model' => $model,
+            'old_data' => $oldData ? json_encode($oldData) : null,
+            'new_data' => $newData ? json_encode($newData) : null,
+        ]);
+    }
+
+    // Tampilkan inventory + audit log
     public function index()
     {
         $perPage = 10;
 
-        // ambil items beserta subcategory & category
+        // Ambil items beserta subcategory & category
         $items = Item::with('subcategory.category')->paginate($perPage);
-
-        // kategori & subkategori untuk dropdown modal
         $categories = Category::with('subcategories')->get();
 
-        // mapping agar siap ditampilkan di blade
+        // Mapping data item
         $mappedItems = $items->getCollection()->map(function ($item) {
             return [
                 'id' => $item->id,
                 'name' => $item->name,
-                'quantity' => $item->qty, // diambil dari database
+                'quantity' => $item->qty ?? 0,
                 'subcategory' => $item->subcategory->name,
                 'subcategory_id' => $item->subcategory_id,
                 'category' => $item->subcategory->category->name,
@@ -31,9 +47,13 @@ class InventoryController extends Controller
             ];
         });
 
+        // Ambil 10 audit log terbaru
+        $logs = AuditLog::latest()->take(10)->get();
+
         return view('inventory', [
             'items' => $mappedItems,
             'categories' => $categories,
+            'logs' => $logs, // <-- kirim logs ke view
             'currentPage' => 'inventory',
             'perPage' => $perPage
         ]);
@@ -46,12 +66,14 @@ class InventoryController extends Controller
             'subcategory_id' => 'required|exists:subcategories,id',
         ]);
 
-        Item::create([
+        $item = Item::create([
             'name' => $validated['name'],
             'subcategory_id' => $validated['subcategory_id'],
-            'json' => [], // default kosong array agar qty = 0
+            'json' => [],
             'date_of_arrival' => now(),
         ]);
+
+        $this->createAuditLog('add', 'Item', null, $item);
 
         return redirect()->back()->with('success', 'Item added successfully!');
     }
@@ -64,10 +86,14 @@ class InventoryController extends Controller
         ]);
 
         $item = Item::findOrFail($id);
+        $oldData = $item->toArray();
+
         $item->update([
             'name' => $validated['name'],
             'subcategory_id' => $validated['subcategory_id'],
         ]);
+
+        $this->createAuditLog('edit', 'Item', $oldData, $item);
 
         return redirect()->back()->with('success', 'Item updated successfully!');
     }
@@ -75,7 +101,10 @@ class InventoryController extends Controller
     public function destroy($id)
     {
         $item = Item::findOrFail($id);
+        $oldData = $item->toArray();
         $item->delete();
+
+        $this->createAuditLog('delete', 'Item', $oldData, null);
 
         return redirect()->back()->with('success', 'Item deleted successfully!');
     }
