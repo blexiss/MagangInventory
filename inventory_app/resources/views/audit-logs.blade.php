@@ -69,11 +69,11 @@
                                 {{ $newData['subcategory'] ?? '-' }}
                             @endif
                         </p>
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            {{ $log->created_at->format('d/m/Y H:i:s') }} - {{ $log->created_at->diffForHumans() }}
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {{ $log->created_at->format('d/m/Y') }} at {{ $log->created_at->format('H:i:s') }} - {{ $log->created_at->diffForHumans() }}
                         </p>
                     </div>
-                </div>
+                </div>  
             </div>
         @endforeach
     </div>
