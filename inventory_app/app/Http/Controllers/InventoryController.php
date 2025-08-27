@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
+use App\Models\Subcategory;
 use App\Models\AuditLog;
 
 class InventoryController extends Controller
@@ -16,12 +17,29 @@ class InventoryController extends Controller
     {
         $user = $this->dummyUsers[array_rand($this->dummyUsers)];
 
+        // Fungsi mapping agar tidak simpan ID, tapi langsung nama
+        $mapData = function ($data) {
+            if (!$data) return null;
+
+            // Jika datanya model Item (ada subcategory_id)
+            if (isset($data['subcategory_id'])) {
+                $subcategory = Subcategory::with('category')->find($data['subcategory_id']);
+                return [
+                    'name'        => $data['name'] ?? null,
+                    'subcategory' => $subcategory ? $subcategory->name : null,
+                    'category'    => $subcategory && $subcategory->category ? $subcategory->category->name : null,
+                ];
+            }
+
+            return $data;
+        };
+
         AuditLog::create([
-            'user' => $user,
-            'action' => $action,
-            'model' => $model,
-            'old_data' => $oldData ? json_encode($oldData) : null,
-            'new_data' => $newData ? json_encode($newData) : null,
+            'user'     => $user,
+            'action'   => $action,
+            'model'    => $model,
+            'old_data' => $oldData ? json_encode($mapData($oldData)) : null,
+            'new_data' => $newData ? json_encode($mapData($newData->toArray())) : null,
         ]);
     }
 
@@ -53,7 +71,7 @@ class InventoryController extends Controller
         return view('inventory', [
             'items' => $mappedItems,
             'categories' => $categories,
-            'logs' => $logs, // <-- kirim logs ke view
+            'logs' => $logs,
             'currentPage' => 'inventory',
             'perPage' => $perPage
         ]);

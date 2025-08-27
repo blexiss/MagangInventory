@@ -9,17 +9,6 @@
             @php
                 $oldData = json_decode($log->old_data, true) ?? [];
                 $newData = json_decode($log->new_data, true) ?? [];
-
-                // ambil hanya field yang berubah
-                $changes = [];
-                foreach ($newData as $key => $value) {
-                    if (($oldData[$key] ?? null) !== $value) {
-                        $changes[$key] = [
-                            'old' => $oldData[$key] ?? '-',
-                            'new' => $value
-                        ];
-                    }
-                }
             @endphp
 
             <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
@@ -49,28 +38,36 @@
                                 </svg>
                         @endswitch
                     </div>
+
                     <div class="ml-4 flex-1">
                         <p class="text-sm text-gray-800 dark:text-gray-200">
-                            <span class="font-semibold">{{ $log->user }}</span> {{ $log->action }} {{ $log->model }}
+                            @if ($log->action === 'add')
+                                <span class="font-semibold">{{ $log->user }}</span> 
+                                add {{ $log->model }}
+                                {{ $newData['name'] ?? '-' }} 
+                                {{ $newData['category'] ?? '-' }} 
+                                {{ $newData['subcategory'] ?? '-' }}
+                            @elseif ($log->action === 'delete')
+                                <span class="font-semibold">{{ $log->user }}</span> 
+                                delete {{ $log->model }}
+                                {{ $oldData['name'] ?? '-' }} 
+                                {{ $oldData['category'] ?? '-' }} 
+                                {{ $oldData['subcategory'] ?? '-' }}
+                            @elseif ($log->action === 'edit')
+                                <span class="font-semibold">{{ $log->user }}</span> 
+                                edit {{ $log->model }}
+                                {{ $oldData['name'] ?? '-' }} 
+                                {{ $oldData['category'] ?? '-' }} 
+                                {{ $oldData['subcategory'] ?? '-' }}
+                                to
+                                {{ $newData['name'] ?? '-' }} 
+                                {{ $newData['category'] ?? '-' }} 
+                                {{ $newData['subcategory'] ?? '-' }}
+                            @endif
                         </p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $log->created_at->format('d/m/Y H:i:s') }}</p>
-
-                        {{-- tampilkan detail perubahan kalau ada --}}
-                        @if (!empty($changes))
-                            <div class="mt-2 text-sm">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($changes as $field => $diff)
-                                        @if ($field === 'name')
-                                            <li>
-                                                <span class="text-gray-600 dark:text-gray-300">{{ ucfirst($field) }}</span> 
-                                                : <span class="text-red-500 line-through">{{ $diff['old'] }}</span> 
-                                                → <span class="text-green-500">{{ $diff['new'] }}</span>
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {{ $log->created_at->format('d/m/Y H:i:s') }} - {{ $log->created_at->diffForHumans() }}
+                        </p>
                     </div>
                 </div>
             </div>
