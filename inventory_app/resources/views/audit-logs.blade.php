@@ -47,25 +47,22 @@
                         <p class="text-sm text-gray-800 dark:text-gray-200">
                             @if ($log->action === 'add')
                                 <span class="font-semibold">{{ $log->user }}</span> 
-                                added {{ $log->model }}
+                                added in
                                 {{ $newData['name'] ?? '-' }} 
-                                {{ $newData['category'] ?? '-' }} 
                                 {{ $newData['subcategory'] ?? '-' }}
                             @elseif ($log->action === 'delete')
                                 <span class="font-semibold">{{ $log->user }}</span> 
-                                deleted {{ $log->model }}
+                                deleted
                                 {{ $oldData['name'] ?? '-' }} 
-                                {{ $oldData['category'] ?? '-' }} 
+                                in
                                 {{ $oldData['subcategory'] ?? '-' }}
                             @elseif ($log->action === 'edit')
                                 <span class="font-semibold">{{ $log->user }}</span> 
-                                edited {{ $log->model }}
+                                edited
                                 {{ $oldData['name'] ?? '-' }} 
-                                {{ $oldData['category'] ?? '-' }} 
                                 {{ $oldData['subcategory'] ?? '-' }}
                                 to
                                 {{ $newData['name'] ?? '-' }} 
-                                {{ $newData['category'] ?? '-' }} 
                                 {{ $newData['subcategory'] ?? '-' }}
                             @endif
                         </p>
