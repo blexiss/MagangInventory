@@ -14,8 +14,8 @@ class ItemSeeder extends Seeder
             ['name' => 'EPSON L3110', 'subcategory' => 'Printer', 'quantity' => 20],
             ['name' => 'HP LaserJet 1020', 'subcategory' => 'Printer', 'quantity' => 15],
             ['name' => 'TP-Link AX3000', 'subcategory' => 'Router', 'quantity' => 15],
-            ['name' => 'Ruijie Reyee EG105W', 'subcategory' => 'AP', 'quantity' => 15],
-            ['name' => 'Camtrix V380 Pro', 'subcategory' => 'CCTV', 'quantity' => 18],
+            ['name' => 'Ruijie Reyee EG105W', 'subcategory' => 'AP', 'quantity' => 5],
+            ['name' => 'Camtrix V380 Pro', 'subcategory' => 'CCTV', 'quantity' => 0],
         ];
 
         foreach ($items as $item) {

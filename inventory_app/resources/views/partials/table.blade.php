@@ -11,9 +11,9 @@
 </div>
 
 <!-- Table -->
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 rounded-t-lg">
+<div class="relative mt-4 overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase rounded-t-lg bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th class="px-6 py-3">ID</th>
                 <th class="px-6 py-3">Item Name</th>
@@ -43,9 +43,9 @@
                 <td class="px-6 py-4">
                     <span
                         class="rounded-full border px-2.5 py-0.5 text-sm
-                        @if($item['status'] === 'Low') border-red-500 text-red-700 dark:text-red-300
+                        @if($item['status'] === 'Out of Stock') border-red-500 text-red-700 dark:text-red-300
+                        @elseif($item['status'] === 'Low') border-yellow-500 text-yellow-700 dark:text-yellow-300
                         @elseif($item['status'] === 'In Stock') border-green-500 text-green-700 dark:text-green-300
-                        @elseif($item['status'] === 'High') border-green-500 text-green-700 dark:text-green-300
                         @endif">
                         {{ $item['status'] }}
                     </span>
@@ -53,7 +53,7 @@
                 <td class="px-6 py-4">
                     <!-- Tombol Edit -->
                     <button type="button"
-                        class="editBtn font-medium text-blue-600 dark:text-blue-500 hover:underline mr-2"
+                        class="mr-2 font-medium text-blue-600 editBtn dark:text-blue-500 hover:underline"
                         data-id="{{ $item['id'] }}"
                         data-name="{{ $item['name'] }}"
                         data-subcategory-id="{{ $item['subcategory_id'] }}">
@@ -64,12 +64,11 @@
                     <form action="{{ route('inventory.destroy', $item['id']) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="font-medium text-red-600 dark:text-red-500 hover:underline"
-                            onclick="return confirm('Yakin ingin menghapus item ini?')">
+                        <button type="submit" class="font-medium text-red-600 dark:text-red-500 hover:underline">
                             Delete
                         </button>
                     </form>
-                </td>
+                  </td>
             </tr>
             @empty
             <tr>
@@ -82,15 +81,52 @@
     </table>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="popup-modal" tabindex="-1"
+     class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 backdrop-blur-sm">
+    <div class="relative w-full max-w-md p-4">
+        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
+            <button type="button"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    id="closeDeleteModal">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-6 text-center">
+                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                    Confirm Deletion?
+                </h3>
+                <button id="confirmDeleteBtn"
+                        class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    Yes
+                </button>
+                <button id="cancelDeleteBtn"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    No
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Add/Edit Item -->
-<div id="crud-modal" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black/40 backdrop-blur-sm">
-    <div class="bg-white rounded-lg shadow-sm p-5 dark:bg-gray-700 w-full max-w-md">
-        <div class="flex justify-between items-center border-b pb-2 dark:border-gray-600">
+<div id="crud-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 backdrop-blur-sm">
+    <div class="w-full max-w-md p-5 bg-white rounded-lg shadow-sm dark:bg-gray-700">
+        <div class="flex items-center justify-between pb-2 border-b dark:border-gray-600">
             <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Add New Item</h3>
             <button type="button" id="closeModal" class="text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
         </div>
 
-        <form id="crudForm" action="{{ route('inventory.store') }}" method="POST" class="mt-4 grid gap-4">
+        <form id="crudForm" action="{{ route('inventory.store') }}" method="POST" class="grid gap-4 mt-4">
             @csrf
             <div>
                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
@@ -121,6 +157,51 @@
 
 @push('scripts')
 <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    let deleteForm; // store the form being deleted
+    const deleteModal = document.getElementById("popup-modal");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    const closeDeleteModal = document.getElementById("closeDeleteModal");
+
+    // Intercept all delete forms
+    document.querySelectorAll("form[action*='inventory'][method='POST']").forEach(form => {
+        const deleteButton = form.querySelector("button[type='submit']");
+        deleteButton.addEventListener("click", function(e) {
+            e.preventDefault();
+            deleteForm = form; // save the current form
+            deleteModal.classList.remove("hidden");
+        });
+    });
+
+    // Confirm delete
+    confirmDeleteBtn.addEventListener("click", () => {
+        if(deleteForm) deleteForm.submit();
+    });
+
+    // Cancel delete
+    cancelDeleteBtn.addEventListener("click", () => {
+        deleteForm = null;
+        deleteModal.classList.add("hidden");
+    });
+
+    // Close modal
+    closeDeleteModal.addEventListener("click", () => {
+        deleteForm = null;
+        deleteModal.classList.add("hidden");
+    });
+
+    // Close modal if clicked outside
+    deleteModal.addEventListener("click", e => {
+        if(e.target === deleteModal){
+            deleteForm = null;
+            deleteModal.classList.add("hidden");
+        }
+    });
+});
+
+
 document.addEventListener("DOMContentLoaded", function() {
     const addItemBtn = document.getElementById("addItemBtn");
     const modal = document.getElementById("crud-modal");

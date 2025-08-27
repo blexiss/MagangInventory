@@ -37,8 +37,8 @@ class Item extends Model
     public function getStatusAttribute()
     {
         $qty = $this->qty;
-        if ($qty <= 5) return "Low";
-        if ($qty <= 10) return "In Stock";
-        return "High";
+        if ($qty <= 0) return "Out of Stock";
+        if ($qty <= 10) return "Low";
+        return "In Stock";
     }
 }

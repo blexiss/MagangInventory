@@ -17,7 +17,6 @@ return new class extends Migration
             $table->date('date_of_arrival')->nullable();
             $table->timestamps();
         });
-        
     }
 
     public function down(): void
