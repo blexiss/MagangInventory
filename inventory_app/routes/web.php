@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\detailItemsCintroller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\DashboardController;
@@ -13,4 +14,5 @@ Route::get('/audit-logs', [AuditLogsController::class, 'index'])->name('audit-lo
 Route::put('/inventory/{id}/update', [InventoryController::class, 'update'])->name('inventory.update');
 Route::delete('/inventory/{id}/delete', [InventoryController::class, 'destroy'])->name('inventory.destroy');
 
-
+Route::get('/inventory/detailitems/{id}', [detailItemsCintroller::class, 'show'])->name('inventory.detailitems');
+Route::put('/inventory/{id}/quantity', [InventoryController::class, 'updateQuantity'])->name('inventory.updateQuantity');
