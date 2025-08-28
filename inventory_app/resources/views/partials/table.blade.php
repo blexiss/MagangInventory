@@ -1,7 +1,7 @@
     @extends('layouts.app')
 
     @section('content')
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between sm:m-4">
             <!-- Add Items Button -->
             <button type="button" id="addItemBtn"
                 class="block rounded-full border border-gray-300 bg-transparent text-gray-900 
@@ -57,7 +57,7 @@
                             <th class="px-6 py-4" scope="row">{{ $loop->iteration }}</th>
                             <td class="px-6 py-4">
                                 <a href="{{ route('inventory.detailitems', ['id' => $item['id']]) }}"
-                                    class="font-bold text-black-600 hover:underline">
+                                    class="font-bold text-black-600">
                                     {{ $item['name'] }}
                                 </a>
                             </td>
@@ -152,7 +152,7 @@
 
         <!-- Modal Add/Edit Item -->
         <div id="crud-modal"
-            class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 backdrop-blur-sm">
+            class="fixed inset-0 z-50 flex items-center justify-center hidden px-6 bg-black/40 backdrop-blur-sm">
             <div class="w-full max-w-md p-5 bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <div class="flex items-center justify-between pb-2 border-b dark:border-gray-600">
                     <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Add New Item</h3>

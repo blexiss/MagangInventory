@@ -11,7 +11,7 @@
     @php
         use Carbon\Carbon;
 
-        // Grouping logs berdasarkan tanggal (format Y-m-d)
+        // Grouping Harian
         $groupedLogs = $logs->groupBy(function($log) {
             return $log->created_at->format('Y-m-d');
         });
@@ -31,7 +31,7 @@
         @endphp
 
         {{-- Header Tanggal --}}
-        <div class="sticky top-0 z-10 py-1 text-sm font-semibold text-center text-gray-700 bg-gray-200 rounded dark:bg-gray-800 dark:text-gray-300">
+        <div class="sticky top-0 z-10 py-4 text-sm font-semibold text-center text-gray-700 bg-gray-200 rounded dark:bg-gray-800 dark:text-gray-300">
             {{ $label }}
         </div>
 
