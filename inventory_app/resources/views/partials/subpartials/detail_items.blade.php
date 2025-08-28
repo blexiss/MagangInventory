@@ -217,7 +217,7 @@
 
         function jsonTableHandler() {
             return {
-                jsonData: @json($item->json) || [],
+                jsonData: '@json($item->json)' || [],
                 selected: {},
                 isModalOpen: false,
                 modalEntry: {},

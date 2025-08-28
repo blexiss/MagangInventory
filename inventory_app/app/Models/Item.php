@@ -14,6 +14,11 @@ class Item extends Model
         'quantity',
     ];
 
+    public function getJsonAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
+    }
+
     protected $casts = [
         'json' => 'array',
     ];

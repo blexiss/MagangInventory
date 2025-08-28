@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use Illuminate\Http\Request;
 
-class detailItemsCintroller extends Controller
+class DetailItemsController extends Controller
 {
     // Tampilkan detail item
     public function show($id)
@@ -17,7 +17,6 @@ class detailItemsCintroller extends Controller
     // Tampilkan form Use Item
     public function showUseForm(Item $item)
     {
-        // Daftar field per kategori
         $fieldsByCategory = [
             'Printer'   => ['Connectivity (USB/WiFi)'],
             'Paper'     => ['Size'],
@@ -41,19 +40,18 @@ class detailItemsCintroller extends Controller
     // Proses Use Item
     public function processUse(Request $request, Item $item)
     {
+        $request->validate([
+            'amount' => 'required|integer|min:1|max:' . $item->quantity,
+        ]);
+
         $amount = (int) $request->input('amount', 1);
+        $data   = collect($request->except(['_token', 'amount']))->toArray();
 
-        // Ambil field dari request (kecuali _token dan amount)
-        $data = collect($request->except(['_token', 'amount']))->toArray();
-
-        // Tambahkan ke JSON
         $json = $item->json ?? [];
         for ($i = 0; $i < $amount; $i++) {
             $json[] = $data;
         }
-        $item->json = $json;
-
-        // Kurangi quantity
+        $item->json     = $json;
         $item->quantity = max(0, $item->quantity - $amount);
         $item->save();
 
@@ -62,32 +60,32 @@ class detailItemsCintroller extends Controller
 
     // Update/Delete JSON
     public function updateJson(Request $request, Item $item)
-{
-    $action = $request->input('action');
-    $json   = $item->json ?? [];
+    {
+        $action = $request->input('action');
+        $json   = $item->json ?? [];
 
-    if ($action === 'update') {
-        foreach ($request->input('json', []) as $index => $data) {
-            if (isset($json[$index])) {
-                $json[$index] = $data;
+        if ($action === 'update') {
+            foreach ($request->input('json', []) as $index => $data) {
+                if (isset($json[$index])) {
+                    $json[$index] = (array) $data;
+                }
             }
-        }
-    } elseif ($action === 'delete') {
-        foreach ($request->input('delete', []) as $index => $value) {
-            if (isset($json[$index])) {
-                unset($json[$index]);
+            $message = 'JSON entry updated successfully!';
+        } elseif ($action === 'delete') {
+            foreach ($request->input('delete', []) as $index => $value) {
+                if (isset($json[$index])) {
+                    unset($json[$index]);
+                }
             }
+            $json = array_values($json); // reindex
+            $message = 'Selected entries deleted successfully!';
+        } else {
+            return redirect()->back()->with('error', 'Invalid action!');
         }
-        // Reindex array setelah delete
-        $json = array_values($json);
-    } else {
-        return redirect()->back()->with('error', 'Invalid action!');
+
+        $item->json = $json;
+        $item->save();
+
+        return redirect()->back()->with('success', $message);
     }
-
-    $item->json = $json;
-    $item->save();
-
-    return redirect()->back()->with('success', 'JSON updated successfully!');
-}
-
 }
