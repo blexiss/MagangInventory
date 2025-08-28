@@ -14,15 +14,20 @@ class Item extends Model
         'quantity',
     ];
 
+    /**
+     * Pastikan json selalu array.
+     * Gunakan accessor saja, casting 'array' dihapus agar tidak bentrok.
+     */
     public function getJsonAttribute($value)
     {
-        return $value ? json_decode($value, true) : [];
+        if (is_null($value)) {
+            return []; // default []
+        }
+
+        return is_array($value) ? $value : json_decode($value, true);
     }
 
-    protected $casts = [
-        'json' => 'array',
-    ];
-
+    // Relasi subcategory
     public function subcategory()
     {
         return $this->belongsTo(Subcategory::class);
@@ -38,8 +43,15 @@ class Item extends Model
     public function getStatusAttribute()
     {
         $qty = $this->qty;
-        if ($qty <= 0) return "Out of Stock";
-        if ($qty <= 10) return "Low";
+
+        if ($qty <= 0) {
+            return "Out of Stock";
+        }
+
+        if ($qty <= 10) {
+            return "Low";
+        }
+
         return "In Stock";
     }
 }
