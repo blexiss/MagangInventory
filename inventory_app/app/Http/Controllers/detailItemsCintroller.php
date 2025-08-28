@@ -7,9 +7,87 @@ use Illuminate\Http\Request;
 
 class detailItemsCintroller extends Controller
 {
+    // Tampilkan detail item
     public function show($id)
     {
-        $item = Item::with('subcategory.category')->findOrFail($id);
+        $item = Item::with('subcategory')->findOrFail($id);
         return view('partials.subpartials.detail_items', compact('item'));
     }
+
+    // Tampilkan form Use Item
+    public function showUseForm(Item $item)
+    {
+        // Daftar field per kategori
+        $fieldsByCategory = [
+            'Printer'   => ['Connectivity (USB/WiFi)'],
+            'Paper'     => ['Size'],
+            'Cartridge' => ['Color'],
+            'CCTV'      => ['Camera Type', 'Resolution', 'IP Address', 'Stream URL'],
+            'Coaxial'   => ['Length (Meter)'],
+            'Router'    => ['IP Address', 'WiFi Standard'],
+            'Switch'    => ['# of Ports', 'IP Address'],
+            'AP'        => ['SSID', 'IP Address', 'Max User'],
+            'Monitor'   => ['Screen Size', 'Resolution'],
+            'PC'        => ['CPU', 'RAM', 'HDD/SSD Size'],
+            'Mouse'     => ['Connectivity'],
+        ];
+
+        $category = $item->subcategory->name ?? 'Unknown';
+        $fields   = $fieldsByCategory[$category] ?? [];
+
+        return view('partials.subpartials.detail_items_use', compact('item', 'fields'));
+    }
+
+    // Proses Use Item
+    public function processUse(Request $request, Item $item)
+    {
+        $amount = (int) $request->input('amount', 1);
+
+        // Ambil field dari request (kecuali _token dan amount)
+        $data = collect($request->except(['_token', 'amount']))->toArray();
+
+        // Tambahkan ke JSON
+        $json = $item->json ?? [];
+        for ($i = 0; $i < $amount; $i++) {
+            $json[] = $data;
+        }
+        $item->json = $json;
+
+        // Kurangi quantity
+        $item->quantity = max(0, $item->quantity - $amount);
+        $item->save();
+
+        return redirect()->route('inventory')->with('success', 'Item used successfully!');
+    }
+
+    // Update/Delete JSON
+    public function updateJson(Request $request, Item $item)
+{
+    $action = $request->input('action');
+    $json   = $item->json ?? [];
+
+    if ($action === 'update') {
+        foreach ($request->input('json', []) as $index => $data) {
+            if (isset($json[$index])) {
+                $json[$index] = $data;
+            }
+        }
+    } elseif ($action === 'delete') {
+        foreach ($request->input('delete', []) as $index => $value) {
+            if (isset($json[$index])) {
+                unset($json[$index]);
+            }
+        }
+        // Reindex array setelah delete
+        $json = array_values($json);
+    } else {
+        return redirect()->back()->with('error', 'Invalid action!');
+    }
+
+    $item->json = $json;
+    $item->save();
+
+    return redirect()->back()->with('success', 'JSON updated successfully!');
+}
+
 }

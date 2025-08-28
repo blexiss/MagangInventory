@@ -16,3 +16,7 @@ Route::delete('/inventory/{id}/delete', [InventoryController::class, 'destroy'])
 
 Route::get('/inventory/detailitems/{id}', [detailItemsCintroller::class, 'show'])->name('inventory.detailitems');
 Route::put('/inventory/{id}/quantity', [InventoryController::class, 'updateQuantity'])->name('inventory.updateQuantity');
+
+Route::get('items/{item}/use', [detailItemsCintroller::class, 'showUseForm'])->name('items.use');
+Route::post('items/{item}/use', [detailItemsCintroller::class, 'processUse'])->name('items.use.process');
+Route::put('items/{item}/update-json', [detailItemsCintroller::class, 'updateJson'])->name('items.updateJson');
