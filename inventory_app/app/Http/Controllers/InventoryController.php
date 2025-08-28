@@ -45,7 +45,7 @@ class InventoryController extends Controller
     // Tampilkan inventory + audit log
     public function index(Request $request)
     {
-        $perPage = 10;
+        $perPage = 20;
         $query = Item::with('subcategory.category');
 
         // Search filter

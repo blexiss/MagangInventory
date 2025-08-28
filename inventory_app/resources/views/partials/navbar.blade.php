@@ -1,8 +1,7 @@
-<nav x-data="{ open: false }" class="relative bg-gray-950/50 {{ $currentPage !== 'inventory' ? 'hidden sm:block' : '' }}">
+<nav x-data="{ open: false }" class="relative hidden bg-gray-900 sm:block {{ $currentPage === 'audit-logs' ? 'sticky top-0 z-50 bg-gray-900' : '' }}">
     <div class="px-4 mx-auto sm:px-6 lg:px-6">
         <div class="flex items-center justify-between h-16">
             @if ($currentPage === 'inventory')
-            
         @endif        
             
             <!-- Desktop -->

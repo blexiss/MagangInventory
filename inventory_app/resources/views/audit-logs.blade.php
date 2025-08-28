@@ -31,7 +31,7 @@
         @endphp
 
         {{-- Header Tanggal --}}
-        <div class="sticky top-0 z-10 py-4 text-sm font-semibold text-center text-gray-700 bg-gray-200 rounded dark:bg-gray-800 dark:text-gray-300">
+        <div class="sticky z-10 py-3 text-sm font-semibold text-center text-gray-700 bg-gray-200 rounded top-16 dark:bg-gray-800 dark:text-gray-300">
             {{ $label }}
         </div>
 
@@ -43,7 +43,7 @@
                     $newData = json_decode($log->new_data, true) ?? [];
                 @endphp
 
-                <div class="p-4 transition hover:bg-gray-50 dark:hover:bg-gray-800">
+                <div class="p-4 transition dark:hover:bg-gray-800">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             @switch($log->action)

@@ -1,20 +1,12 @@
     @extends('layouts.app')
 
     @section('content')
-    <div class="flex items-center justify-between w-full gap-4">
-        <!-- Add Items Button -->
-        <button type="button" id="addItemBtn"
-            class="block rounded-full border border-gray-300 bg-transparent text-gray-900 
-               dark:border-gray-600 dark:bg-gray-800 dark:text-white
-               w-12 h-12 text-2xl flex items-center justify-center
-               fixed bottom-20 right-6 z-50                         
-               sm:static sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 sm:text-sm sm:rounded-lg sm:flex sm:items-center sm:justify-center sm:z-auto">
-            <span class="sm:hidden">+</span>
-            <span class="hidden sm:inline">Add Item</span>
-        </button>
-
+    <!-- Container -->
+    <div class="fixed left-0 right-0 z-40 flex items-center justify-center w-full gap-4 px-20 sm:py-2 sm:px-2 sm:bg-transparent bg-gray-900/80 backdrop-blur-md bottom-16 sm:static sm:backdrop-blur-0 sm:shadow-none sm:border-0">
+        
+        <div class="justify-center flex-1 hidden sm:flex"></div>
         <!-- Searchbar -->
-        <div class="flex-1 flex mb-2 mt-2">
+        <div class="flex flex-1 max-w-xs mt-2 mb-2 sm:mt-0 sm:mb-0">
             <div class="relative w-full sm:max-w-xs sm:min-w-[150px]">
                 <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -28,9 +20,7 @@
                     placeholder="Search ID or Items..." />
             </div>
         </div>
-
-    </div>
-
+@include('partials.add_button')
 
     <!-- Table -->
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
