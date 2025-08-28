@@ -10,7 +10,13 @@
 </head>
 
 
-<body class="bg-white dark:bg-gray-800 m-0 p-0">
+
+<body class="
+    bg-white dark:bg-gray-800 
+    {{ $currentPage === 'audit-logs' ? 'p-0 sm-p0' : '' }}
+    {{ $currentPage === 'inventory' ? 'p-0 sm:p-0' : '' }}
+    {{ $currentPage === 'dashboard' ? 'p-0 sm:p-0 pb-16' : '' }}
+">
 
     @include('partials.navbar')
 

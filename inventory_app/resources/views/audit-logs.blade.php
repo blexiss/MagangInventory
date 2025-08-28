@@ -31,12 +31,12 @@
         @endphp
 
         {{-- Header Tanggal --}}
-        <div class="sticky top-0 z-10 bg-gray-200 dark:bg-gray-800 text-center py-1 text-sm font-semibold text-gray-700 dark:text-gray-300 rounded">
+        <div class="sticky top-0 z-10 py-1 text-sm font-semibold text-center text-gray-700 bg-gray-200 rounded dark:bg-gray-800 dark:text-gray-300">
             {{ $label }}
         </div>
 
         {{-- Logs per tanggal --}}
-        <div class="bg-white divide-y divide-gray-200 rounded-lg shadow mb-6 dark:bg-gray-900 dark:divide-gray-700">
+        <div class="mb-6 bg-white divide-y divide-gray-200 rounded-lg shadow dark:bg-gray-900 dark:divide-gray-700">
             @foreach ($logsPerDay as $log)
                 @php
                     $oldData = json_decode($log->old_data, true) ?? [];
@@ -81,14 +81,13 @@
                             <p class="text-sm text-gray-800 dark:text-gray-200">
                                 @if ($log->action === 'add')
                                     {{ $log->user }} <span class="font-bold">added</span>
-                                    {{ $newData['name'] ?? '-' }} in {{ $newData['subcategory'] ?? '-' }}
+                                    {{ $newData['name'] ?? '-' }} to {{ $newData['subcategory'] ?? '-' }}
                                 @elseif ($log->action === 'delete')
                                     {{ $log->user }} <span class="font-bold">deleted</span>
                                     {{ $oldData['name'] ?? '-' }} in {{ $oldData['subcategory'] ?? '-' }}
                                 @elseif ($log->action === 'edit')
                                     {{ $log->user }} <span class="font-bold">edited</span>
-                                    {{ $oldData['name'] ?? '-' }} {{ $oldData['subcategory'] ?? '-' }}
-                                    to {{ $newData['name'] ?? '-' }} {{ $newData['subcategory'] ?? '-' }}
+                                    {{ $oldData['name'] ?? '-' }} to {{ $newData['name'] ?? '-' }} in {{ $newData['subcategory'] ?? '-' }}
                                 @elseif ($log->action === 'in')
                                     {{ $log->user }} <span class="font-bold">input</span>
                                     {{ $oldData['quantity'] ?? '-' }} items to {{ $newData['quantity'] ?? '-' }} items

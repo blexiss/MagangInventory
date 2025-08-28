@@ -1,25 +1,9 @@
-<nav x-data="{ open: false }" class="relative bg-gray-950/50">
+<nav x-data="{ open: false }" class="relative bg-gray-950/50 {{ $currentPage !== 'inventory' ? 'hidden sm:block' : '' }}">
     <div class="px-4 mx-auto sm:px-6 lg:px-6">
         <div class="flex items-center justify-between h-16">
-
-            <!-- Mobile Hamburger + Search -->
+            @if ($currentPage === 'inventory')
+            <!-- Mobile Search -->
             <div class="flex items-center w-full space-x-2 sm:hidden">
-                <!-- Hamburger -->
-                <button @click="open = true" type="button"
-                        class="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-white/5 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <svg :class="{ 'hidden': open, 'block': !open }" class="block w-6 h-6" fill="none"
-                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
-                    </svg>
-                    <svg :class="{ 'hidden': !open, 'block': open }" class="hidden w-6 h-6" fill="none"
-                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            
-                <!-- Mobile Search -->
                 <div class="flex-1 min-w-0">
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
@@ -34,16 +18,16 @@
                                placeholder=" " />
                         <label for="search_bar"
                                class="absolute top-2 z-10 origin-[0] px-2 text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75
-                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
-                      peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 dark:text-gray-400 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 start-1 bg-white dark:bg-gray-800">
+                              peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100
+                              peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 dark:text-gray-400 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 start-1 bg-white dark:bg-gray-800">
                             Search ID or Items
                         </label>
                     </div>
                 </div>
             </div>
+        @endif        
             
-
-            <!-- Desktop logo + links -->
+            <!-- Desktop -->
             <div class="items-center flex-1 hidden space-x-6 sm:flex sm:items-stretch sm:justify-start">
                 <div class="flex items-center shrink-0">
                     <img src="{{ asset('images/supply1.png') }}" alt="Your Company" class="w-auto h-8"/>
@@ -72,7 +56,7 @@
     </div>
 </nav>
 
-<!-- ✅ Mobile Bottom Navbar (completely outside nav) -->
+<!-- Mobile Bottom Navbar -->
 <div class="fixed bottom-0 left-0 z-50 w-full bg-gray-900 border-t border-gray-700 sm:hidden">
   <div class="grid h-16 max-w-lg grid-cols-3 mx-auto">
     @php
