@@ -15,36 +15,26 @@ class detailItemsCintroller extends Controller
 
     public function processUse(Request $request, Item $item)
     {
-        $validated = $request->validate([
-            'amount' => 'required|numeric|min:1',
-        ]);
-
-        $amount = (float)$validated['amount'];
-
-        if ($item->quantity < $amount) {
-            return back()->with('error', 'Not enough stock available!');
-        }
+        $amount = 1; // default per use
 
         $entry = [
-            'amount'  => $amount,
             'used_at' => now()->format('Y-m-d H:i:s'),
         ];
 
-        foreach ($request->except(['_token', 'amount']) as $key => $value) {
+        foreach ($request->except(['_token']) as $key => $value) {
             $entry[$key] = $value;
         }
 
         $json = $item->json ?? [];
         $json[] = $entry;
 
-        $item->json     = $json;
-        $item->use      = ($item->use ?? 0) + $amount;
+        $item->json = $json;
+        $item->use  = ($item->use ?? 0) + $amount;
         $item->save();
 
         return redirect()->route('inventory.detailitems', $item->id)
             ->with('success', 'Item used successfully!');
     }
-
 
     public function updateJson(Request $request, Item $item)
     {
@@ -54,8 +44,7 @@ class detailItemsCintroller extends Controller
         if ($action === 'delete') {
             foreach ($request->input('delete', []) as $index => $val) {
                 if (isset($json[$index])) {
-                    // Kurangi use sesuai amount yang dihapus
-                    $item->use -= $json[$index]['amount'] ?? 0;
+                    $item->use -= 1; // default 1
                     unset($json[$index]);
                 }
             }
@@ -66,12 +55,8 @@ class detailItemsCintroller extends Controller
         if ($action === 'return' || $action === 'damaged') {
             foreach ($request->input('delete', []) as $index => $val) {
                 if (isset($json[$index])) {
-                    $amount = $json[$index]['amount'] ?? 0;
-                    // Kurangi use
-                    $item->use -= $amount;
-                    // Tambahkan ke damaged
-                    $item->damaged = ($item->damaged ?? 0) + $amount;
-                    // Hapus entry
+                    $item->use -= 1;
+                    $item->damaged = ($item->damaged ?? 0) + 1;
                     unset($json[$index]);
                 }
             }

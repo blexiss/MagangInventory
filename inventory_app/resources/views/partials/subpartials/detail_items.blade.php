@@ -39,16 +39,19 @@
                             stroke-dasharray="{{ $used }}, 100" stroke-linecap="round"
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         @endif
-
                     </svg>
 
                     <div class="text-3xl font-bold text-gray-800 dark:text-white">
-                        {{ $item->quantity }}
+                        {{ $item->quantity  }}
                     </div>
                 </div>
 
                 <!-- Legend -->
                 <div class="flex gap-2 text-sm text-gray-700 dark:text-gray-200 mb-10">
+                    <div class="flex items-center gap-2 mr-4">
+                        <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
+                        <span>Total: {{ $item->quantity - $item->damaged - $item->use }}</span>
+                    </div>
                     <div class="flex items-center gap-2 mr-4">
                         <span class="w-3 h-3 bg-yellow-400 rounded-full"></span>
                         <span>Used: {{ $item->use }}</span>
@@ -97,13 +100,25 @@
             <form id="deleteForm" action="{{ route('items.updateJson', $item->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-2">
-                    <input type="text" name="search" placeholder="Search..." class="border rounded p-2 w-full md:w-1/3 dark:bg-gray-700 dark:text-white"
-                        x-model="searchQuery" @input="filterTable()" />
 
+                <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-2">
+                    <div class="flex flex-1 max-w-xs mt-2 mb-2 sm:mt-0 sm:mb-0">
+                        <div class="relative w-full sm:max-w-xs sm:min-w-[150px]">
+                            <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input type="text" name="search" x-model="searchQuery" @input="filterTable()"
+                                class="block w-full px-10 pt-2 pb-2 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-0"
+                                placeholder="Search ID or Items..." />
+                        </div>
+                    </div>
                     <div class="flex gap-2 md:mt-0" x-show="hasSelected">
                         <button type="submit" name="action" value="delete" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Return</button>
-                        <button type="submit" name="action" value="return" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Damaged</button>
+                        <button type="submit" name="action" value="damaged" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Damaged</button>
                     </div>
                 </div>
 
@@ -112,11 +127,10 @@
                         <tr>
                             <th class="px-6 py-2"><input type="checkbox" @click="toggleAll($event)" /></th>
                             <th class="px-6 py-2">No</th>
-                            <th class="px-6 py-2">Amount</th>
                             <th class="px-6 py-2">Used At</th>
                             @if(!empty($item->json))
                             @foreach(array_keys($item->json[0]) as $field)
-                            @if($field !== 'amount' && $field !== 'used_at')
+                            @if($field !== 'used_at')
                             <th class="px-6 py-2">{{ ucwords(str_replace('_',' ',$field)) }}</th>
                             @endif
                             @endforeach
@@ -131,11 +145,10 @@
                                 <input type="checkbox" name="delete[{{ $index }}]" value="1" x-model="selected[{{ $index }}]" />
                             </td>
                             <td class="px-6 py-2">{{ $index + 1 }}</td>
-                            <td class="px-6 py-2">{{ $entry['amount'] ?? '-' }}</td>
                             <td class="px-6 py-2">{{ $entry['used_at'] ?? '-' }}</td>
 
                             @foreach($entry as $key => $value)
-                            @if(!in_array($key, ['amount','used_at']))
+                            @if($key !== 'used_at')
                             <td class="px-6 py-2">{{ is_array($value) ? json_encode($value) : $value }}</td>
                             @endif
                             @endforeach
@@ -169,7 +182,7 @@
                                     :name="'json['+modalIndex+']['+key+']'"
                                     x-model="modalEntry[key]"
                                     :readonly="key==='used_at'"
-                                    class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white" />
+                                    class="border rounded p-2 w-full dark:bg-gray-700 dark:text-read" />
                             </label>
                         </template>
 
@@ -191,11 +204,6 @@
 
             <form action="{{ route('items.use.process', $item->id) }}" method="POST" class="space-y-4">
                 @csrf
-                <label class="block">
-                    Amount:
-                    <input type="number" name="amount" value="1" min="1" :max="{{ $item->quantity - ($item->use ?? 0) }}"
-                        class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white" required>
-                </label>
 
                 <label class="block">
                     Location:
