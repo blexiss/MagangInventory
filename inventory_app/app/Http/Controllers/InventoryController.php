@@ -62,6 +62,8 @@ class InventoryController extends Controller
             return [
                 'id'            => $item->id,
                 'name'          => $item->name,
+                'use'           => $item->use ?? 0,
+                'damaged'       => $item->damaged ?? 0,
                 'quantity'      => $item->quantity ?? 0,
                 'subcategory'   => $item->subcategory->name,
                 'subcategory_id'=> $item->subcategory_id,

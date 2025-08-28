@@ -46,7 +46,7 @@
                             {{ $item['name'] }}
                         </a>
                     </td>
-                    <td class="px-6 py-4">{{ $item['quantity'] }}</td>
+                    <td class="px-6 py-4">{{ max($item['quantity'] - ($item['use'] ?? 0) - ($item['damaged'] ?? 0), 0) }}</td>
                     <td class="px-6 py-4">
                         <span
                             class="text-xs font-medium px-2 py-0.5 rounded

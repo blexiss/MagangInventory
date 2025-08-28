@@ -13,7 +13,7 @@ class Item extends Model
         'date_of_arrival',
         'quantity',
         'damaged',
-        'use'
+        'use',
     ];
 
     /**
@@ -38,19 +38,25 @@ class Item extends Model
     // Sisa quantity langsung dari kolom database
     public function getQtyAttribute()
     {
-        return $this->attributes['quantity'] ?? 0;
+        $quantity = $this->attributes['quantity'] ?? 0;
+        $used = $this->attributes['use'] ?? 0;
+        $damaged = $this->attributes['damaged'] ?? 0;
+
+        $remaining = $quantity - $used - $damaged;
+
+        return $remaining > 0 ? $remaining : 0; // jangan negatif
     }
 
     // Status otomatis
     public function getStatusAttribute()
     {
-        $qty = $this->qty;
+        $qty = $this->qty; // otomatis sudah quantity - use - damaged
 
         if ($qty <= 0) {
             return "Out of Stock";
         }
 
-        if ($qty <= 10) {
+        if ($qty <= 20) {
             return "Low";
         }
 

@@ -15,40 +15,48 @@
         <!-- Left Panel -->
         <div class="w-full md:w-1/4 p-6 border-b md:border-r md:border-b-0 border-gray-300 dark:border-gray-700 flex flex-col items-center">
             @php
-            $usedQuantity = $item->use ?? 0;
-            $remainingQuantity = $item->quantity;
-
-            $usedPercent = ($usedQuantity + $remainingQuantity) > 0 ? ($usedQuantity / ($usedQuantity + $remainingQuantity) * 100) : 0;
-            $remainingPercent = 100 - $usedPercent;
+            $total = $item->quantity > 0 ? $item->quantity : 1;
+            $used = ($item->use / $total) * 100;
+            $damaged = (($item->damaged+$item->use) / $total) * 100;
             @endphp
 
-            <div class="w-32 h-32 rounded-full border-4 border-gray-500 flex items-center justify-center text-3xl font-bold text-gray-800 dark:text-white mb-6">
-                {{ $item->quantity + $usedQuantity }}
-            </div>
+            <div class="flex flex-col items-center">
+                <!-- Progress Circle -->
+                <div class="relative w-32 h-32 flex items-center justify-center mb-4">
+                    <svg class="absolute w-full h-full" viewBox="0 0 36 36">
+                        <path class="text-gray-300" stroke-width="4" fill="none" stroke="currentColor"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path class="text-blue-400" stroke-width="4" fill="none" stroke="currentColor"
+                            stroke-dasharray="100, 100" stroke-linecap="round"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        @if($item->damaged > 0)
+                        <path class="text-red-400" stroke-width="4" fill="none" stroke="currentColor"
+                            stroke-dasharray="{{ $damaged }}, 100" stroke-linecap="round"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        @endif
+                        @if($item->use > 0)
+                        <path class="text-yellow-400" stroke-width="4" fill="none" stroke="currentColor"
+                            stroke-dasharray="{{ $used }}, 100" stroke-linecap="round"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        @endif
 
-            <!-- Used Quantity -->
-            <div class="w-32 h-32 mb-6 relative">
-                <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
-                    <circle class="text-gray-300 dark:text-gray-600" stroke-width="4" stroke="currentColor" fill="none" cx="18" cy="18" r="16" />
-                    <circle class="text-blue-600 dark:text-blue-400" stroke-width="4" stroke-dasharray="100,100"
-                        stroke-dashoffset="{{ 100 - $usedPercent }}" stroke-linecap="round"
-                        fill="none" cx="18" cy="18" r="16" />
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-800 dark:text-white">
-                    {{ $item->use ?? 0 }}
+                    </svg>
+
+                    <div class="text-3xl font-bold text-gray-800 dark:text-white">
+                        {{ $item->quantity }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- Remaining Quantity -->
-            <div class="w-32 h-32 mb-6 relative">
-                <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
-                    <circle class="text-gray-300 dark:text-gray-600" stroke-width="4" stroke="currentColor" fill="none" cx="18" cy="18" r="16" />
-                    <circle class="text-green-600 dark:text-green-400" stroke-width="4" stroke-dasharray="100,100"
-                        stroke-dashoffset="{{ 100 - $remainingPercent }}" stroke-linecap="round"
-                        fill="none" cx="18" cy="18" r="16" />
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-800 dark:text-white">
-                    {{ $remainingQuantity }}
+                <!-- Legend -->
+                <div class="flex gap-2 text-sm text-gray-700 dark:text-gray-200 mb-10">
+                    <div class="flex items-center gap-2 mr-4">
+                        <span class="w-3 h-3 bg-yellow-400 rounded-full"></span>
+                        <span>Used: {{ $item->use }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-red-400 rounded-full"></span>
+                        <span>Damaged: {{ $item->damaged }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -77,7 +85,7 @@
                 Use Items
             </button>
 
-            <!-- Button Back -->
+            <!-- Back Button -->
             <a href="{{ route('inventory') }}"
                 class="mt-4 w-full px-4 py-2 text-center text-white bg-gray-600 rounded hover:bg-gray-700">
                 Back To Inventory
@@ -94,24 +102,24 @@
                         x-model="searchQuery" @input="filterTable()" />
 
                     <div class="flex gap-2 md:mt-0" x-show="hasSelected">
-                        <button type="submit" name="action" value="delete" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
-                        <button type="submit" name="action" value="return" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Return</button>
+                        <button type="submit" name="action" value="delete" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Return</button>
+                        <button type="submit" name="action" value="return" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Damaged</button>
                     </div>
                 </div>
 
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th class="px-4 py-2"><input type="checkbox" @click="toggleAll($event)" /></th>
+                            <th class="px-6 py-2"><input type="checkbox" @click="toggleAll($event)" /></th>
                             <th class="px-6 py-2">No</th>
                             <th class="px-6 py-2">Amount</th>
                             <th class="px-6 py-2">Used At</th>
                             @if(!empty($item->json))
-                                @foreach(array_keys($item->json[0]) as $field)
-                                    @if($field !== 'amount' && $field !== 'used_at')
-                                        <th class="px-6 py-2">{{ ucwords(str_replace('_',' ',$field)) }}</th>
-                                    @endif
-                                @endforeach
+                            @foreach(array_keys($item->json[0]) as $field)
+                            @if($field !== 'amount' && $field !== 'used_at')
+                            <th class="px-6 py-2">{{ ucwords(str_replace('_',' ',$field)) }}</th>
+                            @endif
+                            @endforeach
                             @endif
                             <th class="px-6 py-2">Action</th>
                         </tr>
@@ -119,7 +127,7 @@
                     <tbody>
                         @forelse($item->json as $index => $entry)
                         <tr class="{{ $index % 2 == 0 ? 'bg-gray-50 dark:bg-gray-700' : '' }}">
-                            <td class="px-4 py-2 text-center">
+                            <td class="px-6">
                                 <input type="checkbox" name="delete[{{ $index }}]" value="1" x-model="selected[{{ $index }}]" />
                             </td>
                             <td class="px-6 py-2">{{ $index + 1 }}</td>
@@ -127,9 +135,9 @@
                             <td class="px-6 py-2">{{ $entry['used_at'] ?? '-' }}</td>
 
                             @foreach($entry as $key => $value)
-                                @if(!in_array($key, ['amount','used_at']))
-                                    <td class="px-6 py-2">{{ is_array($value) ? json_encode($value) : $value }}</td>
-                                @endif
+                            @if(!in_array($key, ['amount','used_at']))
+                            <td class="px-6 py-2">{{ is_array($value) ? json_encode($value) : $value }}</td>
+                            @endif
                             @endforeach
 
                             <td class="px-6 py-2">
@@ -157,7 +165,10 @@
                         <template x-for="(value, key) in modalEntry" :key="key">
                             <label class="block">
                                 <span x-text="key"></span>:
-                                <input type="text" :name="'json['+modalIndex+']['+key+']'" x-model="modalEntry[key]"
+                                <input type="text"
+                                    :name="'json['+modalIndex+']['+key+']'"
+                                    x-model="modalEntry[key]"
+                                    :readonly="key==='used_at'"
                                     class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white" />
                             </label>
                         </template>
@@ -182,8 +193,13 @@
                 @csrf
                 <label class="block">
                     Amount:
-                    <input type="number" name="amount" value="1" min="1" max="{{ $remainingQuantity }}"
-                        class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                    <input type="number" name="amount" value="1" min="1" :max="{{ $item->quantity - ($item->use ?? 0) }}"
+                        class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white" required>
+                </label>
+
+                <label class="block">
+                    Location:
+                    <input type="text" name="location" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
                 </label>
 
                 <template x-for="field in fields" :key="field">
@@ -230,7 +246,7 @@
 
         function jsonTableHandler() {
             return {
-                jsonData: @json($item->json),
+                jsonData: @json($item -> json),
                 selected: {},
                 isModalOpen: false,
                 modalEntry: {},
@@ -241,12 +257,16 @@
                 },
                 openModal(index) {
                     this.modalIndex = index;
-                    this.modalEntry = { ...this.jsonData[index] };
+                    this.modalEntry = {
+                        ...this.jsonData[index]
+                    };
                     this.isModalOpen = true;
                 },
                 toggleAll(event) {
                     const checked = event.target.checked;
-                    this.jsonData.forEach((_, idx) => { this.selected[idx] = checked; });
+                    this.jsonData.forEach((_, idx) => {
+                        this.selected[idx] = checked;
+                    });
                 },
                 filterTable() {
                     const query = this.searchQuery.toLowerCase();
@@ -262,4 +282,5 @@
         }
     </script>
 </body>
+
 </html>

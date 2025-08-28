@@ -38,7 +38,6 @@ class detailItemsCintroller extends Controller
         $json[] = $entry;
 
         $item->json     = $json;
-        $item->quantity -= $amount;
         $item->use      = ($item->use ?? 0) + $amount;
         $item->save();
 
@@ -54,9 +53,30 @@ class detailItemsCintroller extends Controller
 
         if ($action === 'delete') {
             foreach ($request->input('delete', []) as $index => $val) {
-                unset($json[$index]);
+                if (isset($json[$index])) {
+                    // Kurangi use sesuai amount yang dihapus
+                    $item->use -= $json[$index]['amount'] ?? 0;
+                    unset($json[$index]);
+                }
             }
             $json = array_values($json);
+            if ($item->use < 0) $item->use = 0;
+        }
+
+        if ($action === 'return' || $action === 'damaged') {
+            foreach ($request->input('delete', []) as $index => $val) {
+                if (isset($json[$index])) {
+                    $amount = $json[$index]['amount'] ?? 0;
+                    // Kurangi use
+                    $item->use -= $amount;
+                    // Tambahkan ke damaged
+                    $item->damaged = ($item->damaged ?? 0) + $amount;
+                    // Hapus entry
+                    unset($json[$index]);
+                }
+            }
+            $json = array_values($json);
+            if ($item->use < 0) $item->use = 0;
         }
 
         if ($action === 'update' && $request->has('json')) {
