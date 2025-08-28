@@ -15,42 +15,37 @@ class detailItemsCintroller extends Controller
 
     public function processUse(Request $request, Item $item)
     {
-        // Validasi: hanya required, tanpa integer/min/max
         $validated = $request->validate([
-            'amount' => 'required',
+            'amount' => 'required|numeric|min:1',
         ]);
 
-        $amount = $validated['amount']; // biarkan apa adanya
+        $amount = (float)$validated['amount'];
 
-        // Optional: cek kalau ingin stok cukup (bisa tetap pakai integer cast)
-        if ((float)$item->quantity < (float)$amount) {
+        if ($item->quantity < $amount) {
             return back()->with('error', 'Not enough stock available!');
         }
-        
-        // Ambil json lama
-        $json = $item->json ?? [];
 
-        // Entry baru
         $entry = [
             'amount'  => $amount,
             'used_at' => now()->format('Y-m-d H:i:s'),
         ];
 
-        // Field tambahan dari form
         foreach ($request->except(['_token', 'amount']) as $key => $value) {
             $entry[$key] = $value;
         }
 
-        // Tambahkan entry
+        $json = $item->json ?? [];
         $json[] = $entry;
-        $item->json = $json;
 
+        $item->json     = $json;
+        $item->quantity -= $amount;
+        $item->use      = ($item->use ?? 0) + $amount;
         $item->save();
 
-        return redirect()
-            ->route('inventory.detailitems', $item->id)
+        return redirect()->route('inventory.detailitems', $item->id)
             ->with('success', 'Item used successfully!');
     }
+
 
     public function updateJson(Request $request, Item $item)
     {

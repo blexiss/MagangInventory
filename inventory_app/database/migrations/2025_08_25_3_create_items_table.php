@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('subcategory_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(0);
+            $table->integer('use')->default(0);
+            $table->integer('damaged')->default(0);
             $table->longText('json')->default(json_encode([]));
             $table->date('date_of_arrival')->nullable();
             $table->timestamps();

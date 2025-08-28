@@ -12,6 +12,8 @@ class Item extends Model
         'json',
         'date_of_arrival',
         'quantity',
+        'damaged',
+        'use'
     ];
 
     /**
