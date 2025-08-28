@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('use')->default(0);
             $table->integer('damaged')->default(0);
             $table->longText('json')->default(json_encode([]));
+            $table->longText('check')->default(json_encode([]));
             $table->date('date_of_arrival')->nullable();
             $table->timestamps();
         });

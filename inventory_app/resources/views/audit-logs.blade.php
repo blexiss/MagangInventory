@@ -90,10 +90,19 @@
                                     {{ $oldData['name'] ?? '-' }} to {{ $newData['name'] ?? '-' }} in {{ $newData['subcategory'] ?? '-' }}
                                 @elseif ($log->action === 'in')
                                     {{ $log->user }} <span class="font-bold">input</span>
-                                    {{ $oldData['quantity'] ?? '-' }} items to {{ $newData['quantity'] ?? '-' }} items
+                                    {{ $oldData['quantity'] ?? '-' }} items to {{ $newData['quantity'] ?? '-' }} items in {{ $newData['name'] ?? '-' }} of {{ $newData['subcategory'] ?? '-' }}
                                 @elseif ($log->action === 'out')
                                     {{ $log->user }} <span class="font-bold">clear</span>
-                                    {{ $oldData['quantity'] ?? '-' }} items to {{ $newData['quantity'] ?? '-' }} items
+                                    {{ $oldData['quantity'] ?? '-' }} items to {{ $newData['quantity'] ?? '-' }} items in {{ $newData['name'] ?? '-' }} of {{ $newData['subcategory'] ?? '-' }}
+                                @elseif ($log->action === 'use')
+                                    {{ $log->user }} <span class="font-bold">used</span>
+                                    {{ $newData['name'] ?? '-' }} in {{ $newData['subcategory'] ?? '-' }} for {{ $newData['use'] ?? '-' }} items
+                                @elseif ($log->action === 'damaged')
+                                    {{ $log->user }} <span class="font-bold">marked as damaged</span>
+                                    {{ $newData['name'] ?? '-' }} in {{ $newData['subcategory'] ?? '-' }}
+                                @elseif ($log->action === 'return')
+                                    {{ $log->user }} <span class="font-bold">Returning</span>
+                                    {{ $newData['name'] ?? '-' }} in {{ $newData['subcategory'] ?? '-' }} 
                                 @endif
                             </p>
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">

@@ -17,7 +17,8 @@
             @php
             $total = $item->quantity > 0 ? $item->quantity : 1;
             $used = ($item->use / $total) * 100;
-            $damaged = (($item->damaged+$item->use) / $total) * 100;
+            $damaged = ($item->damaged / $total) * 100;
+            $available = $total - $item->use - $item->damaged;
             @endphp
 
             <div class="flex flex-col items-center">
@@ -26,23 +27,25 @@
                     <svg class="absolute w-full h-full" viewBox="0 0 36 36">
                         <path class="text-gray-300" stroke-width="4" fill="none" stroke="currentColor"
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        @if($available>0)
                         <path class="text-blue-400" stroke-width="4" fill="none" stroke="currentColor"
-                            stroke-dasharray="100, 100" stroke-linecap="round"
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        @if($item->damaged > 0)
-                        <path class="text-red-400" stroke-width="4" fill="none" stroke="currentColor"
-                            stroke-dasharray="{{ $damaged }}, 100" stroke-linecap="round"
+                            stroke-dasharray="{{$total}}, 100" stroke-linecap="round"
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         @endif
-                        @if($item->use > 0)
+                        @if($item->use>0)
                         <path class="text-yellow-400" stroke-width="4" fill="none" stroke="currentColor"
-                            stroke-dasharray="{{ $used }}, 100" stroke-linecap="round"
+                            stroke-dasharray="{{ $used + $damaged }}, 100" stroke-linecap="round"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        @endif
+                        @if($item->damaged>0)
+                        <path class="text-red-400" stroke-width="4" fill="none" stroke="currentColor"
+                            stroke-dasharray="{{ $damaged }}, 100" stroke-linecap="round"
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         @endif
                     </svg>
 
                     <div class="text-3xl font-bold text-gray-800 dark:text-white">
-                        {{ $item->quantity  }}
+                        {{ $item->quantity }}
                     </div>
                 </div>
 
@@ -50,7 +53,7 @@
                 <div class="flex gap-2 text-sm text-gray-700 dark:text-gray-200 mb-10">
                     <div class="flex items-center gap-2 mr-4">
                         <span class="w-3 h-3 bg-blue-400 rounded-full"></span>
-                        <span>Total: {{ $item->quantity - $item->damaged - $item->use }}</span>
+                        <span>Available: {{ $available }}</span>
                     </div>
                     <div class="flex items-center gap-2 mr-4">
                         <span class="w-3 h-3 bg-yellow-400 rounded-full"></span>
@@ -117,11 +120,15 @@
                         </div>
                     </div>
                     <div class="flex gap-2 md:mt-0" x-show="hasSelected">
-                        <button type="submit" name="action" value="delete" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Return</button>
-                        <button type="submit" name="action" value="damaged" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Damaged</button>
+                        <!-- Tombol trigger modal alasan -->
+                        <button type="button" @click="openReasonModal('return')"
+                            class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Return</button>
+                        <button type="button" @click="openReasonModal('damaged')"
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Damaged</button>
                     </div>
                 </div>
 
+                <!-- Table -->
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -149,7 +156,9 @@
 
                             @foreach($entry as $key => $value)
                             @if($key !== 'used_at')
-                            <td class="px-6 py-2">{{ is_array($value) ? json_encode($value) : $value }}</td>
+                            <td class="px-6 py-2">
+                                {{ is_array($value) ? json_encode($value) : $value }}
+                            </td>
                             @endif
                             @endforeach
 
@@ -182,7 +191,7 @@
                                     :name="'json['+modalIndex+']['+key+']'"
                                     x-model="modalEntry[key]"
                                     :readonly="key==='used_at'"
-                                    class="border rounded p-2 w-full dark:bg-gray-700 dark:text-read" />
+                                    class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white" />
                             </label>
                         </template>
 
@@ -194,38 +203,56 @@
                 </div>
             </div>
 
-        </div>
-    </div>
+            <!-- Modal Use Items -->
+            <div x-show="isOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-full max-w-md">
+                    <h2 class="text-xl font-bold mb-4">Use Item: {{ $item->name }}</h2>
 
-    <!-- Modal Use Items -->
-    <div x-show="isOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-full max-w-md">
-            <h2 class="text-xl font-bold mb-4">Use Item: {{ $item->name }}</h2>
+                    <form action="{{ route('items.use.process', $item->id) }}" method="POST" class="space-y-4">
+                        @csrf
 
-            <form action="{{ route('items.use.process', $item->id) }}" method="POST" class="space-y-4">
-                @csrf
+                        <label class="block">
+                            Location:
+                            <input type="text" name="location" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                        </label>
 
-                <label class="block">
-                    Location:
-                    <input type="text" name="location" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
-                </label>
+                        <template x-for="field in fields" :key="field">
+                            <label class="block">
+                                <span x-text="field"></span>:
+                                <input type="text" :name="field.toLowerCase().replace(/ /g,'_')" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
+                            </label>
+                        </template>
 
-                <template x-for="field in fields" :key="field">
-                    <label class="block">
-                        <span x-text="field"></span>:
-                        <input type="text" :name="field.toLowerCase().replace(/ /g,'_')" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white">
-                    </label>
-                </template>
-
-                <div class="flex justify-end gap-2">
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Use</button>
-                    <button type="button" @click="isOpen = false" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
+                        <div class="flex justify-end gap-2">
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Use</button>
+                            <button type="button" @click="isOpen = false" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+
+            <!-- Modal Reason -->
+            <div x-show="isReasonOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-full max-w-md">
+                    <h2 class="text-xl font-bold mb-4" x-text="'Reason for ' + reasonAction"></h2>
+                    <form @submit.prevent="submitWithReason()" class="space-y-4">
+                        <input type="hidden" name="action" x-model="reasonAction">
+                        <label class="block">
+                            Reason:
+                            <textarea name="reason" x-model="reasonText" required
+                                class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white"></textarea>
+                        </label>
+                        <div class="flex justify-end gap-2">
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
+                            <button type="button" @click="isReasonOpen=false" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Alpine.js Handlers -->
     <script>
         function useItemHandler() {
             return {
@@ -254,21 +281,49 @@
 
         function jsonTableHandler() {
             return {
-                jsonData: @json($item -> json),
+                jsonData: @json($item->json),
                 selected: {},
                 isModalOpen: false,
                 modalEntry: {},
                 modalIndex: null,
                 searchQuery: '',
+                isReasonOpen: false,
+                reasonText: '',
+                reasonAction: '',
                 get hasSelected() {
                     return Object.values(this.selected).some(v => v);
                 },
                 openModal(index) {
                     this.modalIndex = index;
-                    this.modalEntry = {
-                        ...this.jsonData[index]
-                    };
+                    this.modalEntry = {...this.jsonData[index]};
                     this.isModalOpen = true;
+                },
+                openReasonModal(action) {
+                    this.reasonAction = action;
+                    this.reasonText = '';
+                    this.isReasonOpen = true;
+                },
+                submitWithReason() {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ route("items.updateJson", $item->id) }}';
+                    form.innerHTML = `
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="action" value="${this.reasonAction}">
+                        <input type="hidden" name="reason" value="${this.reasonText}">
+                    `;
+                    Object.entries(this.selected).forEach(([idx, val]) => {
+                        if(val) {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'delete['+idx+']';
+                            input.value = '1';
+                            form.appendChild(input);
+                        }
+                    });
+                    document.body.appendChild(form);
+                    form.submit();
                 },
                 toggleAll(event) {
                     const checked = event.target.checked;
@@ -289,6 +344,6 @@
             }
         }
     </script>
-</body>
 
+</body>
 </html>

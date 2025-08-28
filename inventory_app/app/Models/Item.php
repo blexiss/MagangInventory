@@ -10,6 +10,7 @@ class Item extends Model
         'name',
         'subcategory_id',
         'json',
+        'check',
         'date_of_arrival',
         'quantity',
         'damaged',
