@@ -17,7 +17,6 @@ class InventoryController extends Controller
     {
         $user = $this->dummyUsers[array_rand($this->dummyUsers)];
 
-        // Mapping agar tidak simpan ID tapi langsung nama
         $mapData = function ($data) {
             if (!$data) return null;
 
@@ -44,29 +43,38 @@ class InventoryController extends Controller
     }
 
     // Tampilkan inventory + audit log
-    public function index()
+    public function index(Request $request)
     {
         $perPage = 10;
+        $query = Item::with('subcategory.category');
 
-        $items = Item::with('subcategory.category')->paginate($perPage);
-        $categories = Category::with('subcategories')->get();
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('id', $search);
+        }
 
-        $mappedItems = $items->getCollection()->map(function ($item) {
+        $items = $query->paginate($perPage);
+
+        // Mapping data tapi tetap pakai paginator
+        $items->getCollection()->transform(function ($item) {
             return [
-                'id'          => $item->id,
-                'name'        => $item->name,
-                'quantity'    => $item->quantity ?? 0, // konsisten pakai "quantity"
-                'subcategory' => $item->subcategory->name,
-                'subcategory_id' => $item->subcategory_id,
-                'category'    => $item->subcategory->category->name,
-                'status'      => $item->status,
+                'id'            => $item->id,
+                'name'          => $item->name,
+                'quantity'      => $item->quantity ?? 0,
+                'subcategory'   => $item->subcategory->name,
+                'subcategory_id'=> $item->subcategory_id,
+                'category'      => $item->subcategory->category->name,
+                'status'        => $item->status,
             ];
         });
 
+        $categories = Category::with('subcategories')->get();
         $logs = AuditLog::latest()->take(10)->get();
 
         return view('inventory', [
-            'items'       => $mappedItems,
+            'items'       => $items,
             'categories'  => $categories,
             'logs'        => $logs,
             'currentPage' => 'inventory',
@@ -124,7 +132,6 @@ class InventoryController extends Controller
         return redirect()->back()->with('success', 'Item deleted successfully!');
     }
 
-    // Update quantity (in / out)
     public function updateQuantity(Request $request, $id)
     {
         $validated = $request->validate([
@@ -135,12 +142,10 @@ class InventoryController extends Controller
         $item = Item::findOrFail($id);
         $oldData = $item->toArray();
 
-        $amount = $validated['amount'];
-
         if ($validated['action'] === 'in') {
-            $item->quantity += $amount;
+            $item->quantity += $validated['amount'];
         } else {
-            $item->quantity = max(0, $item->quantity - $amount);
+            $item->quantity = max(0, $item->quantity - $validated['amount']);
         }
 
         $item->save();
