@@ -70,41 +70,29 @@
             </div>
         </div>
     </div>
-
-    <!-- Mobile Off-canvas Sidebar -->
-    <div x-show="open" x-transition class="fixed inset-0 z-50 flex">
-        <!-- Overlay -->
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
-
-        <!-- Sidebar -->
-        <div class="relative w-64 h-full p-4 transition-transform duration-300 transform bg-gray-900"
-             :class="{ 'translate-x-0': open, '-translate-x-full': !open }">
-            <button @click="open = false" class="absolute text-gray-400 top-3 right-3 hover:text-white">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-
-            @php
-                $sidebarLinks = [
-                    ['name' => 'Dashboard', 'route' => 'dashboard'],
-                    ['name' => 'Inventory', 'route' => 'inventory'],
-                    ['name' => 'Audit Logs', 'route' => 'audit-logs'],
-                ];
-            @endphp
-
-            <ul class="mt-8 space-y-2">
-                @foreach ($sidebarLinks as $link)
-                    <li>
-                        <a href="{{ route($link['route']) }}"
-                           @if ($currentPage === strtolower($link['name'])) aria-current="page" @endif
-                           class="{{ $currentPage === strtolower($link['route']) ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white' }} block px-3 py-2 rounded">
-                            {{ $link['name'] }}
-                        </a>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
 </nav>
+
+<!-- ✅ Mobile Bottom Navbar (completely outside nav) -->
+<div class="fixed bottom-0 left-0 z-50 w-full bg-gray-900 border-t border-gray-700 sm:hidden">
+  <div class="grid h-16 max-w-lg grid-cols-3 mx-auto">
+    @php
+      $bottomNav = [
+        ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'M3 3h7v7H3V3z M14 3h7v7h-7V3z M3 14h7v7H3v-7z M14 14h7v7h-7v-7z'], 
+        ['name' => 'Inventory', 'route' => 'inventory', 'icon' => 'M20 13V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6m16 0v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6m16 0H4'],
+        ['name' => 'Audit Logs', 'route' => 'audit-logs', 'icon' => 'M9 12h6m-6 4h6M9 8h6M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z']
+      ];
+    @endphp
+
+    @foreach ($bottomNav as $link)
+      <a href="{{ route($link['route']) }}"
+         class="inline-flex flex-col items-center justify-center px-5 
+                {{ $currentPage === $link['route'] ? 'text-blue-500' : 'text-gray-400 hover:text-white' }}">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="{{ $link['icon'] }}" />
+        </svg>
+        <span class="text-xs">{{ $link['name'] }}</span>
+      </a>
+    @endforeach
+  </div>
+</div>
