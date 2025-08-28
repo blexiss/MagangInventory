@@ -1,5 +1,5 @@
 <!-- Container -->
-<div class="fixed left-0 right-0 z-40 flex items-center justify-center w-full gap-4 px-20 sm:py-2 sm:px-2 sm:bg-transparent bg-gray-900/80 backdrop-blur-md bottom-16 sm:static sm:backdrop-blur-0 sm:shadow-none sm:border-0">
+<div class="fixed left-0 right-0 z-40 flex items-center justify-center w-full gap-2 px-20 sm:py-2 sm:px-2 sm:bg-transparent bg-gray-900/80 backdrop-blur-md bottom-16 sm:static sm:backdrop-blur-0 sm:shadow-none sm:border-0">
     
     <div class="justify-center flex-1 hidden sm:flex"></div>
     <!-- Searchbar -->
