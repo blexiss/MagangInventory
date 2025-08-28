@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth h-full">
+<html lang="en" class="h-full scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -9,11 +9,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="bg-white dark:bg-gray-800 m-0 p-0 h-full" x-data="useItemHandler()">
+<body class="h-full p-0 m-0 bg-white dark:bg-gray-800" x-data="useItemHandler()">
 
-    <div class="flex flex-col md:flex-row h-screen">
+    <div class="flex flex-col h-screen md:flex-row">
         <!-- Left Panel -->
-        <div class="w-full md:w-1/4 p-6 border-b md:border-r md:border-b-0 border-gray-300 dark:border-gray-700 flex flex-col items-center">
+        <div
+            class="flex flex-col items-center w-full p-6 border-b border-gray-300 md:w-1/4 md:border-r md:border-b-0 dark:border-gray-700">
             @php
             $total = $item->quantity > 0 ? $item->quantity : 1;
             $used = ($item->use / $total) * 100;
@@ -23,7 +24,7 @@
 
             <div class="flex flex-col items-center">
                 <!-- Progress Circle -->
-                <div class="relative w-32 h-32 flex items-center justify-center mb-4">
+                <div class="relative flex items-center justify-center w-32 h-32 mb-4">
                     <svg class="absolute w-full h-full" viewBox="0 0 36 36">
                         <path class="text-gray-300" stroke-width="4" fill="none" stroke="currentColor"
                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -68,18 +69,18 @@
 
             <!-- Quantity Controls -->
             <form action="{{ route('inventory.updateQuantity', $item->id) }}" method="POST"
-                class="flex flex-col md:flex-row gap-2 mb-4 w-full md:w-auto">
+                class="flex flex-col w-full gap-2 mb-4 md:flex-row md:w-auto">
                 @csrf
                 @method('PUT')
                 <input type="number" name="amount" value="1"
-                    class="w-full md:w-40 text-center border rounded dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                    class="w-full text-center border rounded md:w-40 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
                 <div class="flex gap-2 mt-2 md:mt-0">
                     <button name="action" value="out"
-                        class="dark:text-white px-3 py-2 border rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 w-full md:w-auto">
+                        class="w-full px-3 py-2 bg-gray-100 border rounded dark:text-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 md:w-auto">
                         OUT
                     </button>
                     <button name="action" value="in"
-                        class="dark:text-white px-3 py-2 border rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 w-full md:w-auto">
+                        class="w-full px-3 py-2 bg-gray-100 border rounded dark:text-white dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 md:w-auto">
                         IN
                     </button>
                 </div>
@@ -93,7 +94,7 @@
 
             <!-- Back Button -->
             <a href="{{ route('inventory') }}"
-                class="mt-4 w-full px-4 py-2 text-center text-white bg-gray-600 rounded hover:bg-gray-700">
+                class="w-full px-4 py-2 mt-4 text-center text-white bg-gray-600 rounded hover:bg-gray-700">
                 Back To Inventory
             </a>
         </div>
@@ -103,22 +104,10 @@
             <form id="deleteForm" action="{{ route('items.updateJson', $item->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+                <div class="flex flex-col items-center justify-between gap-2 mb-4 md:flex-row">
+                    <input type="text" name="search" placeholder="Search..." class="w-full p-2 border rounded md:w-1/3 dark:bg-gray-700 dark:text-white"
+                        x-model="searchQuery" @input="filterTable()" />
 
-                <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-2">
-                    <div class="flex flex-1 max-w-xs mt-2 mb-2 sm:mt-0 sm:mb-0">
-                        <div class="relative w-full sm:max-w-xs sm:min-w-[150px]">
-                            <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                            </div>
-                            <input type="text" name="search" x-model="searchQuery" @input="filterTable()"
-                                class="block w-full px-10 pt-2 pb-2 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-0"
-                                placeholder="Search ID or Items..." />
-                        </div>
-                    </div>
                     <div class="flex gap-2 md:mt-0" x-show="hasSelected">
                         <!-- Tombol trigger modal alasan -->
                         <button type="button" @click="openReasonModal('return')"
@@ -137,7 +126,7 @@
                             <th class="px-6 py-2">Used At</th>
                             @if(!empty($item->json))
                             @foreach(array_keys($item->json[0]) as $field)
-                            @if($field !== 'used_at')
+                            @if($field !== 'amount' && $field !== 'used_at')
                             <th class="px-6 py-2">{{ ucwords(str_replace('_',' ',$field)) }}</th>
                             @endif
                             @endforeach
@@ -152,6 +141,7 @@
                                 <input type="checkbox" name="delete[{{ $index }}]" value="1" x-model="selected[{{ $index }}]" />
                             </td>
                             <td class="px-6 py-2">{{ $index + 1 }}</td>
+                            <td class="px-6 py-2">{{ $entry['amount'] ?? '-' }}</td>
                             <td class="px-6 py-2">{{ $entry['used_at'] ?? '-' }}</td>
 
                             @foreach($entry as $key => $value)
@@ -162,30 +152,32 @@
                             @endif
                             @endforeach
 
-                            <td class="px-6 py-2">
-                                <button type="button" @click="openModal({{ $index }})" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Update</button>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-2">
+                                    <button type="button" @click="openModal({{ $index }})"
+                                        class="px-3 py-1 text-white bg-blue-600 rounded hover:bg-blue-700">Update</button>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="100%" class="px-6 py-3 text-center text-gray-400">No data used yet.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="100%" class="px-6 py-3 text-center text-gray-400">No data used yet.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
             </form>
 
             <!-- Modal Update -->
-            <div x-show="isModalOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-full max-w-md">
-                    <h2 class="text-xl font-bold mb-4">Update Entry</h2>
+            <div x-show="isModalOpen" x-transition
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                <div class="w-full max-w-md p-6 bg-white rounded shadow-lg dark:bg-gray-800">
+                    <h2 class="mb-4 text-xl font-bold">Update Entry</h2>
                     <form action="{{ route('items.updateJson', $item->id) }}" method="POST" class="space-y-4">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="action" value="update">
 
                         <template x-for="(value, key) in modalEntry" :key="key">
-                            <label class="block">
+                            <label class="block text-gray-900 dark:text-white">
                                 <span x-text="key"></span>:
                                 <input type="text"
                                     :name="'json['+modalIndex+']['+key+']'"
@@ -196,8 +188,10 @@
                         </template>
 
                         <div class="flex justify-end gap-2 mt-4">
-                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save</button>
-                            <button type="button" @click="isModalOpen=false" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
+                            <button type="submit"
+                                class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700">Save</button>
+                            <button type="button" @click="isModalOpen=false"
+                                class="px-4 py-2 text-white bg-gray-600 rounded hover:bg-gray-700">Cancel</button>
                         </div>
                     </form>
                 </div>
