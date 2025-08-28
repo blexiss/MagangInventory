@@ -1,17 +1,17 @@
     @extends('layouts.app')
 
     @section('content')
-    <div class="flex items-center justify-between w-full gap-4">
-        <!-- Add Items Button -->
-        <button type="button" id="addItemBtn"
-            class="block rounded-full border border-gray-300 bg-transparent text-gray-900 
-               dark:border-gray-600 dark:bg-gray-800 dark:text-white
-               w-12 h-12 text-2xl flex items-center justify-center
-               fixed bottom-20 right-6 z-50                         
-               sm:static sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 sm:text-sm sm:rounded-lg sm:flex sm:items-center sm:justify-center sm:z-auto">
-            <span class="sm:hidden">+</span>
-            <span class="hidden sm:inline">Add Item</span>
-        </button>
+        <div class="flex items-center justify-between sm:m-4">
+            <!-- Add Items Button -->
+            <button type="button" id="addItemBtn"
+                class="block rounded-full border border-gray-300 bg-transparent text-gray-900 
+                   dark:border-gray-600 dark:bg-gray-800 dark:text-white
+                   w-12 h-12 text-2xl flex items-center justify-center
+                   fixed bottom-20 right-6 z-50                         
+                   sm:static sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 sm:text-sm sm:rounded-lg sm:flex sm:items-center sm:justify-center sm:z-auto">
+                <span class="sm:hidden">+</span>
+                <span class="hidden sm:inline">Add Item</span>
+            </button>
 
         <!-- Searchbar -->
         <div class="flex-1 flex mb-2 mt-2">
@@ -31,35 +31,34 @@
 
     </div>
 
-
-    <!-- Table -->
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase rounded-t-lg bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th class="px-6 py-3">ID</th>
-                    <th class="px-6 py-3">Item Name</th>
-                    <th class="px-6 py-3">Quantity</th>
-                    <th class="px-6 py-3">Category</th>
-                    <th class="px-6 py-3">Stock</th>
-                    <th class="px-6 py-3">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($items as $item)
-                <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th class="px-6 py-4" scope="row">{{ $loop->iteration }}</th>
-                    <td class="px-6 py-4">
-                        <a href="{{ route('inventory.detailitems', ['id' => $item['id']]) }}"
-                            class="font-bold text-black-600 hover:underline">
-                            {{ $item['name'] }}
-                        </a>
-                    </td>
-                    <td class="px-6 py-4">{{ $item['quantity'] }}</td>
-                    <td class="px-6 py-4">
-                        <span
-                            class="text-xs font-medium px-2 py-0.5 rounded
+        <!-- Table -->
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase rounded-t-lg bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th class="px-6 py-3">ID</th>
+                        <th class="px-6 py-3">Item Name</th>
+                        <th class="px-6 py-3">Quantity</th>
+                        <th class="px-6 py-3">Category</th>
+                        <th class="px-6 py-3">Stock</th>
+                        <th class="px-6 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($items as $item)
+                        <tr
+                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <th class="px-6 py-4" scope="row">{{ $loop->iteration }}</th>
+                            <td class="px-6 py-4">
+                                <a href="{{ route('inventory.detailitems', ['id' => $item['id']]) }}"
+                                    class="font-bold text-black-600">
+                                    {{ $item['name'] }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4">{{ $item['quantity'] }}</td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="text-xs font-medium px-2 py-0.5 rounded
                             @if ($item['category'] === 'Printing') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
                             @elseif($item['category'] === 'Monitoring') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
                             @elseif($item['category'] === 'Networking') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
@@ -145,24 +144,14 @@
         </div>
     </div>
 
-    <!-- Modal Add/Edit Item -->
-    <div id="crud-modal"
-        class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/40 backdrop-blur-sm">
-        <div class="w-full max-w-md p-5 bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <div class="flex items-center justify-between pb-2 border-b dark:border-gray-600">
-                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Add New Item</h3>
-                <button type="button" id="closeModal"
-                    class="text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
-            </div>
-
-            <form id="crudForm" action="{{ route('inventory.store') }}" method="POST" class="grid gap-4 mt-4">
-                @csrf
-                <div>
-                    <label for="name"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                    <input type="text" name="name" id="name"
-                        class="bg-gray-50 border rounded-lg w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                        placeholder="Product name" required>
+        <!-- Modal Add/Edit Item -->
+        <div id="crud-modal"
+            class="fixed inset-0 z-50 flex items-center justify-center hidden px-6 bg-black/40 backdrop-blur-sm">
+            <div class="w-full max-w-md p-5 bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                <div class="flex items-center justify-between pb-2 border-b dark:border-gray-600">
+                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white">Add New Item</h3>
+                    <button type="button" id="closeModal"
+                        class="text-gray-400 hover:text-gray-900 dark:hover:text-white">✕</button>
                 </div>
 
                 <div>
